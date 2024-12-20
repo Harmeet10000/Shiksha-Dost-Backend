@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
 
-const adminSchema = new Schema(
+const studentSchema = new Schema(
   {
     name: {
       type: String,
@@ -21,8 +21,8 @@ const adminSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["admin"],
-      default: "admin",
+      enum: ["student", "admin"],
+      default: "student",
     },
     password: {
       type: String,
@@ -55,19 +55,19 @@ const adminSchema = new Schema(
   }
 );
 
-adminSchema.pre(/^find/, function (next) {
+studentSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 });
 
-adminSchema.methods.correctPassword = async function (
+studentSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-adminSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+studentSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -78,7 +78,7 @@ adminSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-adminSchema.methods.createPasswordResetToken = function () {
+studentSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
   this.passwordResetToken = crypto
     .createHash("sha256")
@@ -88,4 +88,4 @@ adminSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-export const Admin = mongoose.model("Admin", adminSchema);
+export const Student = mongoose.model("Student", studentSchema);

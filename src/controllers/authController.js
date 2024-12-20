@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/userModal.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import { Student } from "../models/StudentModel.js";
+import { Student } from "../models/UserModel.js";
 
 //Generate JWT token
 const signToken = (id) => {
