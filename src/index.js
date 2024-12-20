@@ -1,9 +1,11 @@
 import dotenv from "dotenv";
 import connectDB from "./db/connect.js";
+import app from "./app.js";
 
 dotenv.config({
     path: "./.env.sample",
 });
+
 
 connectDB()
     .then(() => {
@@ -14,6 +16,7 @@ connectDB()
     .catch((err) => {
         console.log("Database Connection Failed! ", err);
     });
+
 
     process.on("unhandledRejection", (err) => {
       console.log("UNHANDLED REJECTION! 💥 Shutting down...");

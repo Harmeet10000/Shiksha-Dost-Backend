@@ -1,22 +1,18 @@
-const express = require("express");
-const morgan = require("morgan");
-const rateLimit = require("express-rate-limit");
-const helmet = require("helmet");
-const mongoSanitize = require("express-mongo-sanitize");
-const xss = require("xss-clean");
-const hpp = require("hpp");
-const cors = require("cors");
-const AppError = require("./utils/appError");
-const globalErrorHandler = require("./controllers/errorController");
-
-
+import express from "express";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import hpp from "hpp";
+import cors from "cors";
+import AppError from "./utils/appError.js";
+import globalErrorHandler from "./controllers/errorController.js";
 
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
-
-
 
 app.use(helmet());
 
@@ -46,11 +42,10 @@ app.use(xss());
 // app.use(
 //   hpp({
 //     whitelist: [
-    
+
 //     ],
 //   })
 // );
-
 
 // Test middleware
 app.use((req, res, next) => {
@@ -60,9 +55,7 @@ app.use((req, res, next) => {
 });
 
 const ORIGIN =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:5173"
-    : "";
+  process.env.NODE_ENV === "development" ? "http://localhost:5173" : "";
 
 app.use(
   cors({
@@ -73,12 +66,11 @@ app.use(
   })
 );
 
-
 // 3) ROUTES
-app.use("/api/v1/", );
-app.use("/api/v1/", );
-app.use("/api/v1/", );
-app.use("/api/v1/", );
+// app.use("/api/v1/");
+// app.use("/api/v1/");
+// app.use("/api/v1/");
+// app.use("/api/v1/");
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
@@ -86,4 +78,5 @@ app.all("*", (req, res, next) => {
 
 app.use(globalErrorHandler);
 
-module.exports = app;
+const server = app;
+export default server;
