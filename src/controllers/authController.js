@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/userModal.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import sendEmail from "../utils/email.js";
+import { Student } from "../models/StudentModel.js";
 
 //Generate JWT token
 const signToken = (id) => {
@@ -37,7 +37,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 export const signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
+  const newUser = await Student.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
@@ -57,7 +57,7 @@ export const login = catchAsync(async (req, res, next) => {
   // 2) Check if user exists && password is correct
   const user = await User.findOne({ email })
     .select("+password")
-    .populate({ path: "bookings" });
+    // .populate({ path: "bookings" });
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Incorrect email or password", 401));

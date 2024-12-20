@@ -7,7 +7,7 @@ import xss from "xss-clean";
 import hpp from "hpp";
 import cors from "cors";
 import AppError from "./utils/appError.js";
-import globalErrorHandler from "./controllers/errorController.js";
+import globalErrorHandler from "./middlewares/errorMiddleware.js";
 
 const app = express();
 

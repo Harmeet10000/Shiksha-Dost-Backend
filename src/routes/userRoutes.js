@@ -1,4 +1,6 @@
 import express from 'express';
+import { protect, restrictTo } from '../middlewares/authMiddleware';
+import { forgotPassword, login, resetPassword, signup, updatePassword } from '../controllers/authController';
 
 
 const router = express.Router();
@@ -7,18 +9,18 @@ const router = express.Router();
 
 
 
-router.post("/signup", authController.signup);
-router.post("/login", authController.login);
-router.post("/forgotPassword", authController.forgotPassword);
-router.patch("/resetPassword/:token", authController.resetPassword);
+router.post("/signup", signup);
+router.post("/login", login);
+router.post("/forgotPassword", forgotPassword);
+router.patch("/resetPassword/:token", resetPassword);
 
 // Protect all routes after this middleware
-router.use(authController.protect);
+router.use(protect);
 
-router.patch("/updateMyPassword", authController.updatePassword);
+router.patch("/updateMyPassword", updatePassword);
 router.patch("/updateMe", userController.updateMe);
 router.delete("/deleteMe", userController.deleteMe);
-router.use(authController.restrictTo("admin"));
+router.use(restrictTo("admin"));
 
 router
   .route("/")
