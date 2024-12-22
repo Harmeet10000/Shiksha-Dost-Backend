@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
-const studentSchema = new Schema(
+const userSchema = new Schema(
   {
     name: {
       type: String,
@@ -15,7 +15,7 @@ const studentSchema = new Schema(
       unique: true,
       validate: [validator.isEmail, "Please provide a valid email"],
     },
-    photo: {
+    profile_image: {
       type: String,
       default: "default.jpg",
     },
@@ -55,19 +55,32 @@ const studentSchema = new Schema(
   }
 );
 
-studentSchema.pre(/^find/, function (next) {
+userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 });
 
-studentSchema.methods.correctPassword = async function (
+userSchema.pre("save", async function (next) {
+  try {
+    if (!this.isModified("password")) {
+      return next();
+    }
+
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-studentSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -78,7 +91,7 @@ studentSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-studentSchema.methods.createPasswordResetToken = function () {
+userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
   this.passwordResetToken = crypto
     .createHash("sha256")
@@ -88,4 +101,6 @@ studentSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-export const Student = mongoose.model("Student", studentSchema);
+ const User = mongoose.model("User", userSchema);
+
+ export default User

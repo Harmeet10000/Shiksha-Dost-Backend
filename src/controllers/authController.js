@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import User from "../models/userModal.js";
+import User from "../models/UserModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import { Student } from "../models/UserModel.js";
+// import { Student } from "../models/UserModel.js";
 
 //Generate JWT token
 const signToken = (id) => {
@@ -37,7 +37,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 export const signup = catchAsync(async (req, res, next) => {
-  const newUser = await Student.create({
+  const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
