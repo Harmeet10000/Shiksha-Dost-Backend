@@ -1,7 +1,7 @@
 import express from 'express';
-import { protect, restrictTo } from '../middlewares/authMiddleware';
-import { forgotPassword, login, resetPassword, signup, updatePassword } from '../controllers/authController';
-
+import { protect, restrictTo } from '../middlewares/authMiddleware.js';
+import { forgotPassword, login, resetPassword, signup, updatePassword } from '../controllers/authController.js';
+import { updateMe, deleteMe, getUser, updateUser, deleteUser ,getAllUsers,createUser} from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -18,19 +18,19 @@ router.patch("/resetPassword/:token", resetPassword);
 router.use(protect);
 
 router.patch("/updateMyPassword", updatePassword);
-router.patch("/updateMe", userController.updateMe);
-router.delete("/deleteMe", userController.deleteMe);
+router.patch("/updateMe", updateMe);
+router.delete("/deleteMe", deleteMe);
 router.use(restrictTo("admin"));
 
 router
   .route("/")
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .get(getAllUsers)
+  .post(createUser);
 
 router
   .route("/:id")
-  .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 
 export default router;

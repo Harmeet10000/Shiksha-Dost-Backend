@@ -8,6 +8,8 @@ import hpp from "hpp";
 import cors from "cors";
 import AppError from "./utils/appError.js";
 import globalErrorHandler from "./middlewares/errorMiddleware.js";
+import userRoutes from "./routes/userRoutes.js"
+
 
 const app = express();
 
@@ -67,7 +69,7 @@ app.use(
 );
 
 // 3) ROUTES
-// app.use("/api/v1/");
+app.use("/api/v1/users",userRoutes);
 // app.use("/api/v1/");
 // app.use("/api/v1/");
 // app.use("/api/v1/");

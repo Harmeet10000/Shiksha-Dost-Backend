@@ -1,6 +1,6 @@
 import { promisify } from "util";
 import jwt from "jsonwebtoken";
-import User from "../models/userModal.js";
+import User from "../models/UserModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 

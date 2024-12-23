@@ -1,9 +1,9 @@
-import User from "../models/userModal.js";
+import User from "../models/UserModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import factory from "./handlerFactory.js";
+import {getAll,getOne,deleteOne,updateOne,createOne} from "./handlerFactory.js";
 
-export const uploadUserPhoto = upload.single("photo");
+// export const uploadUserPhoto = upload.single("photo");
 
 // exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 //   if (!req.file) return next();
@@ -135,12 +135,12 @@ export const getNatourStats = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getUser = factory.getOne(User, { path: "bookings" });
-export const getAllUsers = factory.getAll(User, {
+export const getUser = getOne(User, { path: "bookings" });
+export const getAllUsers = getAll(User, {
   path: "bookings",
   select: "tour",
 });
 
 // Do NOT update passwords with this!
-export const updateUser = factory.updateOne(User);
-export const deleteUser = factory.deleteOne(User);
+export const updateUser = updateOne(User);
+export const deleteUser = deleteOne(User);
