@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import User from "../models/UserModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-// import { Student } from "../models/UserModel.js";
+import { Mentor } from "../models/MentorModel.js";
+import { User } from "../models/UserModel.js";
 
 //Generate JWT token
 const signToken = (id) => {
@@ -41,7 +41,16 @@ export const signup = catchAsync(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
+  });
+  console.log(newUser);
+  createSendToken(newUser, 201, res);
+});
+
+export const signupMentor = catchAsync(async (req, res, next) => {
+  const newUser = await Mentor.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
   });
   console.log(newUser);
   createSendToken(newUser, 201, res);
@@ -55,7 +64,27 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password!", 400));
   }
   // 2) Check if user exists && password is correct
-  const user = await Student.findOne({ email })
+  const user = await User.findOne({ email })
+    .select("+password")
+    // .populate({ path: "bookings" });
+
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError("Incorrect email or password", 401));
+  }
+
+  // 3) If everything ok, send token to client
+  createSendToken(user, 200, res);
+});
+
+export const loginMentor = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // 1) Check if email and password exist
+  if (!email || !password) {
+    return next(new AppError("Please provide email and password!", 400));
+  }
+  // 2) Check if user exists && password is correct
+  const user = await Mentor.findOne({ email })
     .select("+password")
     // .populate({ path: "bookings" });
 
@@ -128,7 +157,6 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("Token is invalid or has expired", 400));
   }
   user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
@@ -149,7 +177,6 @@ export const updatePassword = catchAsync(async (req, res, next) => {
 
   // 3) If so, update password
   user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
   // User.findByIdAndUpdate will NOT work as intended!
 

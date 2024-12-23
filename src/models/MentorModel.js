@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const mentorSchema = new Schema(
   {
@@ -30,16 +30,6 @@ const mentorSchema = new Schema(
       minlength: 8,
       select: false,
     },
-    passwordConfirm: {
-      type: String,
-      required: [true, "Please confirm your password"],
-      validate: {
-        validator: function (el) {
-          return el === this.password;
-        },
-        message: "Passwords are not the same!",
-      },
-    },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -58,6 +48,19 @@ const mentorSchema = new Schema(
 mentorSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
+});
+
+mentorSchema.pre("save", async function (next) {
+  try {
+    if (!this.isModified("password")) {
+      return next();
+    }
+
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 mentorSchema.methods.correctPassword = async function (

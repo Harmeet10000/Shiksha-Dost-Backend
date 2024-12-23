@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect, restrictTo } from '../middlewares/authMiddleware.js';
-import { forgotPassword, login, resetPassword, signup, updatePassword } from '../controllers/authController.js';
+import { forgotPassword, login, loginMentor, resetPassword, signup, signupMentor, updatePassword } from '../controllers/authController.js';
 import { updateMe, deleteMe, getUser, updateUser, deleteUser ,getAllUsers,createUser} from '../controllers/userController.js';
 
 const router = express.Router();
@@ -10,7 +10,10 @@ const router = express.Router();
 
 
 router.post("/signup", signup);
+router.post("/signupMentor", signupMentor);
 router.post("/login", login);
+router.post("/loginMentor", loginMentor);
+
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 
