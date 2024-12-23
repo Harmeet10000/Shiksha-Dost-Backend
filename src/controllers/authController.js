@@ -43,7 +43,37 @@ export const signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
   });
   console.log(newUser);
+
+  const verificationToken = newUser.createEmailVerificationToken();
+  await newUser.save({ validateBeforeSave: false });
+
   createSendToken(newUser, 201, res);
+  const verificationURL = `${req.protocol}://${req.get(
+    "host"
+  )}/verify-email/${verificationToken}`;
+
+  const message = `Please verify your email by clicking on the following link: ${verificationURL}`;
+  try {
+    await sendEmail({
+      email: newUser.email,
+      subject: "Email Verification",
+      message,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Verification email sent!",
+    });
+  } catch (err) {
+    newUser.emailVerificationToken = undefined;
+    newUser.emailVerificationExpires = undefined;
+    await newUser.save({ validateBeforeSave: false });
+
+    res.status(500).json({
+      status: "error",
+      message: "There was an error sending the email. Try again later!",
+    });
+  }
 });
 
 export const signupMentor = catchAsync(async (req, res, next) => {
@@ -56,6 +86,35 @@ export const signupMentor = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, res);
 });
 
+export const verifyEmail = catchAsync(async (req, res, next) => {
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    emailVerificationToken: hashedToken,
+    emailVerificationExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      status: "error",
+      message: "Token is invalid or has expired",
+    });
+  }
+
+  user.isVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpires = undefined;
+  await user.save();
+
+  res.status(200).json({
+    status: "success",
+    message: "Email verified successfully!",
+  });
+});
+
 export const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -64,9 +123,8 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password!", 400));
   }
   // 2) Check if user exists && password is correct
-  const user = await User.findOne({ email })
-    .select("+password")
-    // .populate({ path: "bookings" });
+  const user = await User.findOne({ email }).select("+password");
+  // .populate({ path: "bookings" });
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Incorrect email or password", 401));
@@ -84,9 +142,8 @@ export const loginMentor = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password!", 400));
   }
   // 2) Check if user exists && password is correct
-  const user = await Mentor.findOne({ email })
-    .select("+password")
-    // .populate({ path: "bookings" });
+  const user = await Mentor.findOne({ email }).select("+password");
+  // .populate({ path: "bookings" });
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Incorrect email or password", 401));
