@@ -55,7 +55,7 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password!", 400));
   }
   // 2) Check if user exists && password is correct
-  const user = await User.findOne({ email })
+  const user = await Student.findOne({ email })
     .select("+password")
     // .populate({ path: "bookings" });
 
@@ -69,7 +69,7 @@ export const login = catchAsync(async (req, res, next) => {
 
 export const forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
-  const user = await User.findOne({ email: req.body.email });
+  const user = await Student.findOne({ email: req.body.email });
   if (!user) {
     return next(new AppError("There is no user with email address.", 404));
   }
