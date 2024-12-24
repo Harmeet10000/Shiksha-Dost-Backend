@@ -15,7 +15,7 @@ const mentorSchema = new Schema(
       unique: true,
       validate: [validator.isEmail, "Please provide a valid email"],
     },
-    photo: {
+    profile_image: {
       type: String,
       default: "default.jpg",
     },
@@ -60,6 +60,20 @@ mentorSchema.pre(/^find/, function (next) {
   next();
 });
 
+mentorSchema.pre("save", async function (next) {
+  try {
+    if (!this.isModified("password")) {
+      return next();
+    }
+
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 mentorSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
@@ -88,4 +102,6 @@ mentorSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-export const Mentor = mongoose.model("Mentor", mentorSchema);
+ const Mentor = mongoose.model("Mentor", mentorSchema);
+
+export default Mentor
