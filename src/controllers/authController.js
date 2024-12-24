@@ -2,7 +2,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import { Mentor } from "../models/MentorModel.js";
+import  Mentor  from "../models/MentorModel.js";
 import { User } from "../models/UserModel.js";
 
 //Generate JWT token
