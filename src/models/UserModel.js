@@ -30,16 +30,6 @@ const userSchema = new Schema(
       minlength: 8,
       select: false,
     },
-    passwordConfirm: {
-      type: String,
-      required: [true, "Please confirm your password"],
-      validate: {
-        validator: function (el) {
-          return el === this.password;
-        },
-        message: "Passwords are not the same!",
-      },
-    },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -48,6 +38,12 @@ const userSchema = new Schema(
       default: true,
       select: false,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: String,
+    emailVerificationExpires: Date,
   },
   {
     toJSON: { virtuals: true },
@@ -72,6 +68,16 @@ userSchema.pre("save", async function (next) {
     next(error);
   }
 });
+
+userSchema.methods.createEmailVerificationToken = function () {
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  this.emailVerificationToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex");
+  this.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+  return verificationToken;
+};
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,
@@ -101,6 +107,5 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
- const User = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema);
 
- export default User

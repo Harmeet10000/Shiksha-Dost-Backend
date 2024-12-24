@@ -1,7 +1,7 @@
-import User from "../models/UserModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import {getAll,getOne,deleteOne,updateOne,createOne} from "./handlerFactory.js";
+import { User } from "../models/UserModel.js";
 
 // export const uploadUserPhoto = upload.single("photo");
 
@@ -34,7 +34,7 @@ export const getMe = (req, res, next) => {
 
 export const updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
-  if (req.body.password || req.body.passwordConfirm) {
+  if (req.body.password ) {
     return next(
       new AppError(
         "This route is not for password updates. Please use /updateMyPassword.",

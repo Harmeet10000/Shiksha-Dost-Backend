@@ -1,8 +1,8 @@
 import { promisify } from "util";
 import jwt from "jsonwebtoken";
-import User from "../models/UserModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
+import { User } from "../models/UserModel.js";
 
 export const protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
