@@ -33,7 +33,7 @@ router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 
 // Protect all routes after this middleware
-router.use(protect);
+// router.use(protect);
 
 router.patch("/updateMyPassword", updatePassword);
 router.patch("/updateMe", updateMe);

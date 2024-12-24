@@ -2,8 +2,10 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import  Mentor  from "../models/MentorModel.js";
+import Mentor from "../models/MentorModel.js";
 import { User } from "../models/UserModel.js";
+import { Resend } from "resend";
+
 
 //Generate JWT token
 const signToken = (id) => {
@@ -37,6 +39,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 export const signup = catchAsync(async (req, res, next) => {
+  console.log(req.body);
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -45,25 +48,27 @@ export const signup = catchAsync(async (req, res, next) => {
   console.log(newUser);
 
   const verificationToken = newUser.createEmailVerificationToken();
+
   await newUser.save({ validateBeforeSave: false });
 
-  createSendToken(newUser, 201, res);
-  const verificationURL = `${req.protocol}://${req.get(
-    "host"
+  const verificationURL = `${req.get(
+    "Origin"
   )}/verify-email/${verificationToken}`;
-
+  console.log(verificationURL);
   const message = `Please verify your email by clicking on the following link: ${verificationURL}`;
+
+ 
+  const resend = new Resend("re_SndqQCtq_ZXfs8no6N7YMyd7sVk5HY7LJ");
+
   try {
-    await sendEmail({
-      email: newUser.email,
-      subject: "Email Verification",
-      message,
+    await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>",
+      to: newUser.email,
+      subject: "Verify Your Email Address",
+      html: `<strong>${message}</strong>`,
     });
 
-    res.status(200).json({
-      status: "success",
-      message: "Verification email sent!",
-    });
+    createSendToken(newUser, 201, res);
   } catch (err) {
     newUser.emailVerificationToken = undefined;
     newUser.emailVerificationExpires = undefined;
@@ -74,6 +79,11 @@ export const signup = catchAsync(async (req, res, next) => {
       message: "There was an error sending the email. Try again later!",
     });
   }
+  
+
+  
+
+  
 });
 
 export const signupMentor = catchAsync(async (req, res, next) => {
@@ -92,6 +102,7 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
+    console.log(hashedToken);
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
     emailVerificationExpires: { $gt: Date.now() },

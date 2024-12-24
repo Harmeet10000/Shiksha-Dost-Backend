@@ -8,8 +8,7 @@ import hpp from "hpp";
 import cors from "cors";
 import AppError from "./utils/appError.js";
 import globalErrorHandler from "./middlewares/errorMiddleware.js";
-import userRoutes from "./routes/userRoutes.js"
-
+import userRoutes from "./routes/userRoutes.js";
 
 const app = express();
 
@@ -55,13 +54,12 @@ app.use((req, res, next) => {
   // console.log(req.headers);
   next();
 });
-
-const ORIGIN =
-  process.env.NODE_ENV === "development" ? "http://localhost:5173" : "";
-
+// console.log(process.env.NODE_ENV);
+// const ORIGIN = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "";
+// console.log(ORIGIN);
 app.use(
   cors({
-    origin: ORIGIN,
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
@@ -69,7 +67,7 @@ app.use(
 );
 
 // 3) ROUTES
-app.use("/api/v1/users",userRoutes);
+app.use("/api/v1/users", userRoutes);
 // app.use("/api/v1/");
 // app.use("/api/v1/");
 // app.use("/api/v1/");
