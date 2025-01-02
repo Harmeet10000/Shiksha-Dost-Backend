@@ -1,0 +1,51 @@
+{
+  "name": "shiksha-dost-backend",
+  "version": "1.0.0",
+  "description": "This is a scalable, secure and modular backend for ShikshaDost",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "dev:prod": "NODE_ENV=production nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harmeet10000/Shiksha-Dost-Backend.git"
+  },
+  "keywords": [
+    "Docker",
+    "rate-limiting",
+    "read-replicas"
+  ],
+  "author": "Harmeet Singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Harmeet10000/Shiksha-Dost-Backend/issues"
+  },
+  "homepage": "https://github.com/Harmeet10000/Shiksha-Dost-Backend#readme",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.721.0",
+    "@aws-sdk/s3-request-presigner": "^3.717.0",
+    "aws-sdk": "^2.1692.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "razorpay": "^2.9.5",
+    "resend": "^4.0.1",
+    "validator": "^13.12.0",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
