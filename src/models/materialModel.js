@@ -24,7 +24,7 @@ const materialSchema = new Schema({
   },
   year: {
     type: Number,
-    required: [true, "A material must have a year"],
+    default: new Date().getFullYear(),
   },
   s3URL: {
     type: String,

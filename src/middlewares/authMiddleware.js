@@ -3,11 +3,12 @@ import jwt from "jsonwebtoken";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { User } from "../models/userModel.js";
+import { Mentor } from "../models/mentorModel.js";
 
 export const protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
-  console.log("headers", req.headers.authorization);
+  // console.log("headers", req.headers.authorization);
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
@@ -23,16 +24,12 @@ export const protect = catchAsync(async (req, res, next) => {
 
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-  // 3) Check if user still exists
-  const currentUser = await User.findById(decoded.id);
-  if (!currentUser) {
-    return next(
-      new AppError(
-        "The user belonging to this token does no longer exist.",
-        401
-      )
-    );
+  // 3) Check if user/mentor still exists
+  let currentUser;
+  if (decoded.role === "mentor") {
+    currentUser = await Mentor.findById(decoded.id);
+  } else {
+    currentUser = await User.findById(decoded.id);
   }
 
   // 4) Check if user changed password after the token was issued

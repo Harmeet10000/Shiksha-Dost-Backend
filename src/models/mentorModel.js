@@ -19,6 +19,15 @@ const mentorSchema = new Schema(
       type: String,
       default: "default.jpg",
     },
+    bio: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    skills: {
+      type: [String],
+    },
     role: {
       type: String,
       enum: ["mentor"],
@@ -29,6 +38,42 @@ const mentorSchema = new Schema(
       required: [true, "Please provide a password"],
       minlength: 8,
       select: false,
+    },
+    unavailability: [
+      {
+        date: {
+          type: Date,
+          required: true,
+        },
+        slots: [
+          {
+            start: {
+              type: String,
+              required: true,
+            },
+            end: {
+              type: String,
+              required: true,
+            },
+          },
+        ],
+      },
+    ],
+    totalMentees: {
+      type: Number,
+      default: 0,
+    },
+    revenue: {
+      weekly: {
+        type: Map, // Using Map to store week number as key and revenue as value
+        of: Number,
+        default: {},
+      },
+      monthly: {
+        type: Map, // Using Map to store month (e.g., "2025-01") as key and revenue as value
+        of: Number,
+        default: {},
+      },
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
