@@ -10,15 +10,7 @@ import {
   updatePassword,
   verifyEmail,
 } from "../controllers/authController.js";
-import {
-  updateMe,
-  deleteMe,
-  getUser,
-  updateUser,
-  deleteUser,
-  getAllUsers,
-  createUser,
-} from "../controllers/userController.js";
+
 
 const router = express.Router();
 
@@ -33,8 +25,7 @@ router.get("/verify-email/:token", verifyEmail);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 router.patch("/updateMyPassword", updatePassword);
-router.patch("/updateMe", updateMe);
-router.delete("/deleteMe", deleteMe);
+// router.patch("/updateMe", updateMe);
 
 router.use(restrictTo("admin"));
 

@@ -54,3 +54,42 @@ export const updateMentor = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+export const unavailabilityUpdate = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { unavailability } = req.body;
+
+  if (!unavailability || !Array.isArray(unavailability)) {
+    return next(new AppError("Invalid or missing 'unavailability' data.", 400));
+  }
+
+  // Validate the structure of unavailability
+  const isValid = unavailability.every(
+    (item) =>
+      item.date &&
+      Array.isArray(item.slots) &&
+      item.slots.every((slot) => slot.start && slot.end)
+  );
+
+  if (!isValid) {
+    return next(new AppError("Invalid 'unavailability' structure.", 400));
+  }
+
+  // Update the mentor's unavailability in the database
+  const updatedMentor = await Mentor.findByIdAndUpdate(
+    id,
+    { unavailability },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedMentor) {
+    return next(new AppError("Mentor not found.", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Unavailability updated successfully.",
+    data: updatedMentor,
+  });
+});
+
