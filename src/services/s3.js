@@ -5,8 +5,8 @@ import multer from "multer";
 
 const BUCKET_NAME = "shikshadost-studymaterial";
 const BUCKET_REGION = "ap-south-1";
-const ACCESS_KEY = "AKIAQXUIXJ2Z7TGKFNUY";
-const SECRET_ACCESS_KEY = "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";
+const ACCESS_KEY = process.env.ACCESS_KEY;
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY;
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage();
