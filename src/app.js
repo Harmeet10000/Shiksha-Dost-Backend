@@ -59,9 +59,7 @@ app.use((req, res, next) => {
   // console.log(req.headers);
   next();
 });
-// console.log(process.env.NODE_ENV);
-// const ORIGIN = process.env.NODE_ENV === "development" ? "http://localhost:5173" : "";
-// console.log(ORIGIN);
+ 
 app.use(
   cors({
     origin: "http://localhost:5173",

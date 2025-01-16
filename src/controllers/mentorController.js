@@ -75,21 +75,79 @@ export const unavailabilityUpdate = catchAsync(async (req, res, next) => {
     return next(new AppError("Invalid 'unavailability' structure.", 400));
   }
 
-  // Update the mentor's unavailability in the database
-  const updatedMentor = await Mentor.findByIdAndUpdate(
-    id,
-    { unavailability },
-    { new: true, runValidators: true }
-  );
+  const now = new Date();
 
-  if (!updatedMentor) {
+  // Ensure no past dates
+  const hasPastDates = unavailability.some((item) => new Date(item.date) < now);
+  if (hasPastDates) {
+    return next(
+      new AppError("Unavailability contains dates in the past.", 400)
+    );
+  }
+
+  // Retrieve mentor from the database
+  const mentor = await Mentor.findById(id);
+  if (!mentor) {
     return next(new AppError("Mentor not found.", 404));
   }
+
+  // Update unavailability
+  const existingUnavailability = mentor.unavailability || [];
+  unavailability.forEach((newItem) => {
+    const incomingDate = new Date(newItem.date);
+    incomingDate.setHours(0, 0, 0, 0); // Set to midnight for accurate comparison
+
+    // Find the existing item with the same date
+    const existingItem = existingUnavailability.find(
+      (item) =>
+        new Date(item.date).setHours(0, 0, 0, 0) === incomingDate.getTime()
+    );
+
+    if (existingItem) {
+      // Check if all slots already exist
+      const allSlotsExist = newItem.slots.every((newSlot) =>
+        existingItem.slots.some(
+          (existingSlot) =>
+            existingSlot.start === newSlot.start &&
+            existingSlot.end === newSlot.end
+        )
+      );
+
+      if (allSlotsExist) {
+        return next(
+          new AppError(
+            `The date ${newItem.date} with these slots already exists.`,
+            400
+          )
+        );
+      }
+
+      // Add new slots
+      newItem.slots.forEach((newSlot) => {
+        const slotExists = existingItem.slots.some(
+          (existingSlot) =>
+            existingSlot.start === newSlot.start &&
+            existingSlot.end === newSlot.end
+        );
+        if (!slotExists) {
+          existingItem.slots.push(newSlot);
+        }
+      });
+    } else {
+      // Add new date and slots
+      existingUnavailability.push(newItem);
+    }
+  });
+
+  // Save updated unavailability
+  mentor.unavailability = existingUnavailability;
+  await mentor.save();
 
   res.status(200).json({
     status: "success",
     message: "Unavailability updated successfully.",
-    data: updatedMentor,
+    data: mentor,
   });
 });
+
 
