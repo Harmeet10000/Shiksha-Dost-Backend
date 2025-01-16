@@ -2,9 +2,9 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
+import { sendEmail } from "../services/email.js";
 import { Mentor } from "../models/mentorModel.js";
 import { User } from "../models/userModel.js";
-import { sendEmail } from "../services/email.js";
 
 //Generate JWT token
 const signToken = (id, role) => {
@@ -37,35 +37,26 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-export const signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-  });
-
-  const verificationToken = newUser.createEmailVerificationToken();
-
-  await newUser.save({ validateBeforeSave: false });
-
-  const baseUrl =
-    req.get("Origin") || "http://localhost:3000";
-  const verificationURL = `${baseUrl}/verify-email/${verificationToken}`;
-  console.log(verificationURL);
-
-  const message = `
-    <p>Hello ${req.body.name},</p>
-    <p>Please verify your email address by clicking on the link below:</p>
-    <a href="${verificationURL}" target="_blank">${verificationURL}</a>
-  `;
-
+const createSendEmail = async (user, req, next) => {
   try {
-    await sendEmail(newUser.email, "Verify Your Email Address", message);
-    createSendToken(newUser, 201, res);
+    const verificationToken = user.createEmailVerificationToken();
+    await user.save({ validateBeforeSave: false });
+
+    const baseUrl = req.get("Origin") || "http://localhost:5173";
+    const verificationURL = `${baseUrl}/verify-email/${verificationToken}`;
+    // console.log(verificationURL);
+
+    const message = `
+      <p>Hello ${user.name},</p>
+      <p>Please verify your email address by clicking on the link below:</p>
+      <a href="${verificationURL}" target="_blank">${verificationURL}</a>
+    `;
+
+    await sendEmail(user.email, "Verify Your Email Address", message);
   } catch (err) {
-    newUser.emailVerificationToken = undefined;
-    newUser.emailVerificationExpires = undefined;
-    await newUser.save({ validateBeforeSave: false });
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save({ validateBeforeSave: false });
     return next(
       new AppError(
         "There was an error sending the email. Try again later!",
@@ -73,6 +64,17 @@ export const signup = catchAsync(async (req, res, next) => {
       )
     );
   }
+};
+
+export const signup = catchAsync(async (req, res, next) => {
+  const newUser = await User.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+  });
+
+  await createSendEmail(newUser, req, next);
+  createSendToken(newUser, 201, res);
 });
 
 export const signupMentor = catchAsync(async (req, res, next) => {
@@ -81,13 +83,9 @@ export const signupMentor = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
-  console.log(newUser);
-  res.status(201).json({
-    status: "success",
-    result: {
-      newUser,
-    },
-  });
+  // console.log(newUser);
+  await createSendEmail(newUser, req, next);
+  createSendToken(newUser, 201, res);
 });
 
 export const verifyEmail = catchAsync(async (req, res, next) => {

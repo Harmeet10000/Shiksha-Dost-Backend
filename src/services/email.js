@@ -10,6 +10,7 @@ const sesClient = new SESClient({
     secretAccessKey: process.env.SES_SECRET_KEY,
   },
 });
+console.log("SES client created", sesClient, process.env.SES_REGION, process.env.SES_ACCESS_KEY, process.env.SES_SECRET_KEY);
 
 export const sendEmail = catchAsync(async (to, subject, body) => {
   if (!to || !subject || !body) {
