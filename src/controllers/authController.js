@@ -4,7 +4,7 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { Mentor } from "../models/mentorModel.js";
 import { User } from "../models/userModel.js";
-import { Resend } from "resend";
+import { sendEmail } from "../services/email.js";
 
 //Generate JWT token
 const signToken = (id, role) => {
@@ -38,44 +38,40 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 export const signup = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
   });
-  console.log(newUser);
 
   const verificationToken = newUser.createEmailVerificationToken();
 
   await newUser.save({ validateBeforeSave: false });
 
-  const verificationURL = `${req.get(
-    "Origin"
-  )}/verify-email/${verificationToken}`;
+  const baseUrl =
+    req.get("Origin") || "http://localhost:3000";
+  const verificationURL = `${baseUrl}/verify-email/${verificationToken}`;
   console.log(verificationURL);
-  const message = `Please verify your email by clicking on the following link: ${verificationURL}`;
 
-  const resend = new Resend("re_SndqQCtq_ZXfs8no6N7YMyd7sVk5HY7LJ");
+  const message = `
+    <p>Hello ${req.body.name},</p>
+    <p>Please verify your email address by clicking on the link below:</p>
+    <a href="${verificationURL}" target="_blank">${verificationURL}</a>
+  `;
 
   try {
-    await resend.emails.send({
-      from: "Acme <onboarding@resend.dev>",
-      to: newUser.email,
-      subject: "Verify Your Email Address",
-      html: `<strong>${message}</strong>`,
-    });
-
+    await sendEmail(newUser.email, "Verify Your Email Address", message);
     createSendToken(newUser, 201, res);
   } catch (err) {
     newUser.emailVerificationToken = undefined;
     newUser.emailVerificationExpires = undefined;
     await newUser.save({ validateBeforeSave: false });
-
-    res.status(500).json({
-      status: "error",
-      message: "There was an error sending the email. Try again later!",
-    });
+    return next(
+      new AppError(
+        "There was an error sending the email. Try again later!",
+        500
+      )
+    );
   }
 });
 

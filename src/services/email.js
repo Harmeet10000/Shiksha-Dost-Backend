@@ -1,37 +1,48 @@
-import AWS from "aws-sdk";
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import catchAsync from "../utils/catchAsync.js";
+import AppError from "../utils/appError.js";
 
-// Configure AWS SDK
-AWS.config.update({ region: "us-east-1" }); // Set your region
 
-const ses = new AWS.SES({ apiVersion: "2010-12-01" });
+const sesClient = new SESClient({
+  region: process.env.SES_REGION,
+  credentials: {
+    accessKeyId: process.env.SES_ACCESS_KEY,
+    secretAccessKey: process.env.SES_SECRET_KEY,
+  },
+});
 
-const sendEmail = async ({ email, subject, message }) => {
+export const sendEmail = catchAsync(async (to, subject, body) => {
+  if (!to || !subject || !body) {
+    throw new AppError(
+      "Email, subject, and body are required for sending an email.",
+      400
+    );
+  }
+
   const params = {
-    Source: "your-email@example.com", // Verified email in SES
+    Source: process.env.MAIL_SENDER_DEFAULT,
     Destination: {
-      ToAddresses: [email],
+      ToAddresses: [to],
     },
     Message: {
       Subject: {
         Data: subject,
-        Charset: "UTF-8",
       },
       Body: {
         Text: {
-          Data: message,
-          Charset: "UTF-8",
+          Data: body,
         },
       },
     },
   };
 
   try {
-    await ses.sendEmail(params).promise();
-    console.log("Email sent successfully");
+    const command = new SendEmailCommand(params);
+    const result = await sesClient.send(command);
+    console.log("Email sent", result);
+    return result; // Return the SES response
   } catch (error) {
-    console.error("Error sending email", error);
-    throw new Error("Error sending email");
+    console.log("Email not sent", error);
+    throw new AppError(`Failed to send email: ${error.message}`, 500);
   }
-};
-
-export default sendEmail;
+});
