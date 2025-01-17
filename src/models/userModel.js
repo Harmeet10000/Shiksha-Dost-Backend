@@ -51,6 +51,8 @@ const userSchema = new Schema(
   }
 );
 
+userSchema.index({ email: 1, isVerified: 1 });
+
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
