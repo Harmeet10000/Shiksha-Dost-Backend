@@ -26,9 +26,9 @@ const materialSchema = new Schema({
     type: Number,
     default: new Date().getFullYear(),
   },
-  s3URL: {
+  filename: {
     type: String,
-    required: [true, "A material must have an S3 URL"],
+    required: [true, "A material must have a filename"],
   },
 });
 

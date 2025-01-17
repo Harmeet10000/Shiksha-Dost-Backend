@@ -1,19 +1,47 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { Mentor } from "../models/mentorModel.js";
-import { uploadToS3 } from "../services/s3.js";
+import { getS3URL, uploadToS3 } from "../services/s3.js";
+
+const updateMentorsWithSignedURLs = (mentors) => {
+  return Promise.all(
+    mentors.map((mentor) => {
+      return getS3URL(mentor.profile_image)
+        .then((signedUrl) => {
+          // console.log("Signed URL:", signedUrl);
+
+          return {
+            ...mentor._doc, // Use `_doc` for plain object in Mongoose
+            profile_image: signedUrl,
+          };
+        })
+        .catch((err) => {
+          console.error(
+            `Error generating signed URL for ${mentor.profile_image}`,
+            err
+          );
+          return mentor;  
+        });
+    })
+  );
+};
+
+
 
 export const getAllMentor = catchAsync(async (req, res, next) => {
   const mentors = await Mentor.find();
+  console.log("Mentors",mentors);
 
   if (!mentors) {
     return next(new AppError("No mentors found", 404));
   }
 
+  const updatedMentors = await updateMentorsWithSignedURLs(mentors);
+
   res.status(200).json({
     status: "success",
     data: {
-      mentors,
+      mentors: updatedMentors,
     },
   });
 });
@@ -27,10 +55,6 @@ export const updateMentor = catchAsync(async (req, res, next) => {
     return next(new AppError("No file uploaded.", 400));
   }
   await uploadToS3(req.file);
-  const BUCKET_NAME = "shikshadost-studymaterial";
-  const BUCKET_REGION = "ap-south-1";
-  const profileImageURL = `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${file.originalname}`;
-  // console.log("s3URL", profileImageURL);
 
   const updatedMentor = await Mentor.findByIdAndUpdate(
     id,
@@ -38,7 +62,7 @@ export const updateMentor = catchAsync(async (req, res, next) => {
       ...(bio && { bio }),
       ...(description && { description }),
       ...(skills && { skills }),
-      ...(profileImageURL && { profile_image: profileImageURL }),
+      ...(file.originalname && { profile_image: file.originalname }),
     },
     { new: true, runValidators: true }
   );
@@ -149,5 +173,3 @@ export const unavailabilityUpdate = catchAsync(async (req, res, next) => {
     data: mentor,
   });
 });
-
-

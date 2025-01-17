@@ -3,9 +3,6 @@ import AppError from "../utils/appError.js";
 import { Material } from "../models/materialModel.js";
 import { uploadToS3 } from "../services/s3.js";
 
-
-
-
 export const uploadFile = catchAsync(async (req, res, next) => {
   const file = req.file;
   if (!file) {
@@ -13,9 +10,6 @@ export const uploadFile = catchAsync(async (req, res, next) => {
   }
 
   await uploadToS3(file);
-  
-  const s3URL = `https://${process.env.BUCKET_NAME}.s3.${process.env.BUCKET_REGION}.amazonaws.com/${file.originalname}`;
-  // console.log("s3URL", s3URL);
 
   const newMaterial = await Material.create({
     category: req.body.category,
@@ -23,7 +17,7 @@ export const uploadFile = catchAsync(async (req, res, next) => {
     subject: req.body.subject,
     chapter: req.body.chapter,
     topicName: req.body.topicName,
-    s3URL: s3URL,
+    filename: file.originalname,
   });
 
   res.status(200).send({
