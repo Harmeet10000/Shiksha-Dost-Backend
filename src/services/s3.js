@@ -51,7 +51,7 @@ export const getS3URL = (fileName) => {
     };
 
     getSignedUrl(s3Client, new GetObjectCommand(getObjectParams), {
-      expiresIn: 1800,
+      expiresIn: 3600,
     })
       .then((signedUrl) => {
         // console.log("Generated Signed URL:", signedUrl);

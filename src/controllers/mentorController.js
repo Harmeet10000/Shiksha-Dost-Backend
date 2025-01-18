@@ -2,6 +2,7 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { Mentor } from "../models/mentorModel.js";
 import { getS3URL, uploadToS3 } from "../services/s3.js";
+import mongoose from "mongoose";
 
 const updateMentorsWithSignedURLs = (mentors) => {
   return Promise.all(
@@ -20,17 +21,15 @@ const updateMentorsWithSignedURLs = (mentors) => {
             `Error generating signed URL for ${mentor.profile_image}`,
             err
           );
-          return mentor;  
+          return mentor;
         });
     })
   );
 };
 
-
-
 export const getAllMentor = catchAsync(async (req, res, next) => {
   const mentors = await Mentor.find();
-  console.log("Mentors",mentors);
+  console.log("Mentors", mentors);
 
   if (!mentors) {
     return next(new AppError("No mentors found", 404));
@@ -166,6 +165,86 @@ export const unavailabilityUpdate = catchAsync(async (req, res, next) => {
   // Save updated unavailability
   mentor.unavailability = existingUnavailability;
   await mentor.save();
+
+  res.status(200).json({
+    status: "success",
+    message: "Unavailability updated successfully.",
+    data: mentor,
+  });
+});
+
+export const removeUnavailability = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { date, slots } = req.body;
+
+  if (!date && !slots) {
+    return next(
+      new AppError("Please provide a 'date' or 'slots' to remove.", 400)
+    );
+  }
+
+  const mentorResult = await Mentor.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(id) },
+    },
+    {
+      $project: {
+        unavailability: 1,
+      },
+    },
+  ]);
+
+  if (!mentorResult || mentorResult.length === 0) {
+    return next(new AppError("Mentor not found.", 404));
+  }
+
+  const mentor = mentorResult[0];
+
+  // Parse and normalize date for comparison
+  const incomingDate = new Date(date);
+  incomingDate.setHours(0, 0, 0, 0); // Normalize to midnight for accurate comparison
+
+  // Find the unavailability item by date
+  const existingUnavailability = mentor.unavailability || [];
+  const existingItemIndex = existingUnavailability.findIndex(
+    (item) =>
+      new Date(item.date).setHours(0, 0, 0, 0) === incomingDate.getTime()
+  );
+
+  if (existingItemIndex === -1) {
+    return next(new AppError("Unavailability date not found.", 404));
+  }
+
+  const existingItem = existingUnavailability[existingItemIndex];
+
+  // If only a date is provided, remove the entire date
+  if (date && !slots) {
+    existingUnavailability.splice(existingItemIndex, 1);
+  }
+
+  // If slots are provided, remove specific slots for the date
+  if (slots && Array.isArray(slots)) {
+    slots.forEach((slot) => {
+      const slotIndex = existingItem.slots.findIndex(
+        (existingSlot) =>
+          existingSlot.start === slot.start && existingSlot.end === slot.end
+      );
+
+      if (slotIndex !== -1) {
+        existingItem.slots.splice(slotIndex, 1);
+      }
+    });
+
+    // Remove the entire date if no slots are left
+    if (existingItem.slots.length === 0) {
+      existingUnavailability.splice(existingItemIndex, 1);
+    }
+  }
+
+  await Mentor.updateOne(
+    { _id: id },
+    { $set: { unavailability: existingUnavailability } }
+  );
 
   res.status(200).json({
     status: "success",
