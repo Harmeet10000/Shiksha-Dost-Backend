@@ -1,7 +1,7 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { Mentor } from "../models/mentorModel.js";
-import { getS3URL, uploadToS3 } from "../services/s3.js";
+import { getS3URL, uploadToS3 } from "../helpers/s3.js";
 import mongoose from "mongoose";
 
 const updateMentorsWithSignedURLs = (mentors) => {
@@ -26,6 +26,8 @@ const updateMentorsWithSignedURLs = (mentors) => {
     })
   );
 };
+
+
 
 export const getAllMentor = catchAsync(async (req, res, next) => {
   const mentors = await Mentor.find();
@@ -53,7 +55,7 @@ export const updateMentor = catchAsync(async (req, res, next) => {
   if (!file) {
     return next(new AppError("No file uploaded.", 400));
   }
-  await uploadToS3(req.file);
+  await uploadToS3(req.file, mentors);
 
   const updatedMentor = await Mentor.findByIdAndUpdate(
     id,

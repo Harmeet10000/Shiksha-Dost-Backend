@@ -2,14 +2,12 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { Comment } from "../models/commentModel.js";
 
-
 export const getBlogComments = catchAsync(async (req, res, next) => {
-  const comments = await Comment.find({ blog: req.params.blogId }).populate(
-    "user"
-  );
+  const comments = await Comment.find({ blog: req.params.blogId })
+    .populate("user")
+    .sort({ createdAt: -1 });
   res.status(200).json({
     status: "success",
-    results: comments.length,
     data: {
       comments,
     },
@@ -18,7 +16,7 @@ export const getBlogComments = catchAsync(async (req, res, next) => {
 
 export const addComment = catchAsync(async (req, res, next) => {
   const newComment = await Comment.create({
-    user: req.body.user,
+    user: req.user._id,
     blog: req.params.blogId,
     desc: req.body.desc,
   });

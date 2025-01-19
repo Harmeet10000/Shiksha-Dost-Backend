@@ -7,7 +7,7 @@ import {
   updateOne,
   createOne,
   blockOne,
-} from "./handlerFactory.js";
+} from "../services/handlerFactory.js";
 import { User } from "../models/userModel.js";
 import { Mentor } from "../models/mentorModel.js";
 

@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const blogSchema = new Schema(
   {
-    mentor: {
+    author: {
       type: Schema.Types.ObjectId,
       ref: "Mentor",
       required: true,
@@ -15,6 +15,11 @@ const blogSchema = new Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     desc: {
       type: String,
     },
@@ -22,13 +27,13 @@ const blogSchema = new Schema(
       type: String,
       default: "general",
     },
-    isFeatured: {
-      type: Boolean,
-      default: false,
-    },
     content: {
       type: String,
       required: true,
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false,
     },
     visit: {
       type: Number,

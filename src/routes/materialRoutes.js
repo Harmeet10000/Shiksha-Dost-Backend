@@ -1,7 +1,7 @@
 
 import express from "express";
 import { uploadFile } from "../controllers/materialController.js";
-import { upload } from "../services/s3.js";
+import { upload } from "../helpers/s3.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();

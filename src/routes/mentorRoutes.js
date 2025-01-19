@@ -1,7 +1,7 @@
 import express from "express";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 import { getAllMentor, removeUnavailability, unavailabilityUpdate, updateMentor } from "../controllers/mentorController.js";
-import { upload } from "../services/s3.js";
+import { upload } from "../helpers/s3.js";
 
 
 const router = express.Router();

@@ -11,7 +11,7 @@ import multer from "multer";
 const storage = multer.memoryStorage();
 export const upload = multer({ storage: storage });
 
-export const uploadToS3 = catchAsync(async (file) => {
+export const uploadToS3 = catchAsync(async (file, destination) => {
   const s3Client = new S3Client({
     region: process.env.BUCKET_REGION,
     credentials: {
@@ -21,7 +21,7 @@ export const uploadToS3 = catchAsync(async (file) => {
   });
   const uploadParams = {
     Bucket: process.env.BUCKET_NAME,
-    Key: file.originalname,
+    Key: `${destination}/${file.originalname}`,
     Body: file.buffer,
     ContentType: file.mimetype,
   };
@@ -47,12 +47,10 @@ export const getS3URL = (fileName) => {
 
     const getObjectParams = {
       Bucket: process.env.BUCKET_NAME,
-      Key: fileName,
+      Key: `material/${fileName}`,
     };
 
-    getSignedUrl(s3Client, new GetObjectCommand(getObjectParams), {
-      expiresIn: 3600,
-    })
+    getSignedUrl(s3Client, new GetObjectCommand(getObjectParams))
       .then((signedUrl) => {
         // console.log("Generated Signed URL:", signedUrl);
         resolve(signedUrl);
@@ -63,3 +61,39 @@ export const getS3URL = (fileName) => {
       });
   });
 };
+
+export const getUploadS3URL = catchAsync(async (req, res, next) => {
+  const { filename, contentType } = req.body;
+
+  if (!filename || !contentType) {
+    return next(new AppError("Filename and ContentType are required", 400));
+  }
+
+  const s3Client = new S3Client({
+    region: process.env.BUCKET_REGION,
+    credentials: {
+      accessKeyId: process.env.ACCESS_KEY,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY,
+    },
+  });
+
+  const path = `blogs/${Date.now()}-${filename}`;
+
+  const params = {
+    Bucket: process.env.BUCKET_NAME,
+    Key: path,
+    ContentType: contentType,
+  };
+
+  const signedUrl = await getSignedUrl(
+    s3Client,
+    new PutObjectCommand(params),
+    { expiresIn: 60 * 15 } // URL valid for 5 minutes
+  );
+
+  res.status(200).json({
+    status: "success",
+    signedUrl,
+    path,
+  });
+});

@@ -1,7 +1,7 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { Material } from "../models/materialModel.js";
-import { uploadToS3 } from "../services/s3.js";
+import { uploadToS3 } from "../helpers/s3.js";
 
 export const uploadFile = catchAsync(async (req, res, next) => {
   const file = req.file;
@@ -9,7 +9,7 @@ export const uploadFile = catchAsync(async (req, res, next) => {
     return next(new AppError("No file uploaded.", 400));
   }
 
-  await uploadToS3(file);
+  await uploadToS3(file, material);
 
   const newMaterial = await Material.create({
     category: req.body.category,

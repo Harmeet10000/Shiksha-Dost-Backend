@@ -30,6 +30,10 @@ const userSchema = new Schema(
       minlength: 8,
       select: false,
     },
+    savedPosts: {
+      type: [String],
+      default: [],
+    },
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,

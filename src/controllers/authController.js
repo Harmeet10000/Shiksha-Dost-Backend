@@ -2,7 +2,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import { sendEmail } from "../services/email.js";
+import { sendEmail } from "../helpers/email.js";
 import { Mentor } from "../models/mentorModel.js";
 import { User } from "../models/userModel.js";
 

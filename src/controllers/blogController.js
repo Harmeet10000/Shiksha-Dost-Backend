@@ -4,6 +4,7 @@ import { Blog } from "../models/blogModel.js";
 import APIFeatures from "../utils/apiFeatures.js";
 
 export const getAllBlogs = catchAsync(async (req, res, next) => {
+  console.log("getAllBlogs", req.query);
   const features = new APIFeatures(Blog.find(), req.query)
     .filter()
     .sort()
@@ -21,7 +22,7 @@ export const getAllBlogs = catchAsync(async (req, res, next) => {
 });
 
 export const getBlog = catchAsync(async (req, res, next) => {
-  const blog = await Blog.findById(req.params.id).populate("mentor");
+  const blog = await Blog.findOne({ slug: req.params.slug }).populate("mentor");
   if (!blog) {
     return next(new AppError("No blog found with that ID", 404));
   }
@@ -35,30 +36,22 @@ export const getBlog = catchAsync(async (req, res, next) => {
 });
 
 export const createBlog = catchAsync(async (req, res, next) => {
-  const newBlog = await Blog.create(req.body);
-  res.status(201).json({
-    status: "success",
-    data: {
-      blog: newBlog,
-    },
-  });
-});
+  let slug = req.body.title.replace(/ /g, "-").toLowerCase();
 
-export const updateBlog = catchAsync(async (req, res, next) => {
-  const blog = await Blog.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!blog) {
-    return next(new AppError("No blog found with that ID", 404));
+  let existingBlog = await Blog.findOne({ slug });
+
+  let counter = 2;
+
+  while (existingBlog) {
+    slug = `${slug}-${counter}`;
+    existingBlog = await Blog.findOne({ slug });
+    counter++;
   }
 
-  res.status(200).json({
-    status: "success",
-    data: {
-      blog,
-    },
-  });
+  const newBlog = new Blog({ author: req.user._id, slug, ...req.body });
+
+  const blog = await newBlog.save();
+  res.status(200).json(blog);
 });
 
 export const deleteBlog = catchAsync(async (req, res, next) => {
@@ -90,3 +83,21 @@ export const featureBlog = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+export const updateBlog = catchAsync(async (req, res, next) => {
+  const blog = await Blog.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!blog) {
+    return next(new AppError("No blog found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      blog,
+    },
+  });
+});
+
