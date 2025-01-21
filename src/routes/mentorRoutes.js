@@ -7,7 +7,6 @@ import {
   unavailabilityUpdate,
   updateMentor,
 } from "../controllers/mentorController.js";
-import { upload } from "../helpers/s3.js";
 
 const router = express.Router();
 
@@ -17,11 +16,9 @@ router.get("/getAllMentor", getAllMentor);
 
 router.use(restrictTo("mentor"));
 
-router.patch("/:id", upload.single("file"), updateMentor);
+router.patch("/:id", updateMentor);
 router.patch("/unavailability/:id", unavailabilityUpdate);
 router.get("/unavailability/:id", getUnavailability);
 router.patch("/removeUnavailability/:id", removeUnavailability);
-
-
 
 export default router;

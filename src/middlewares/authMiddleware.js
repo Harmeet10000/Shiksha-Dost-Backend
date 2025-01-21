@@ -6,16 +6,25 @@ import { User } from "../models/userModel.js";
 import { Mentor } from "../models/mentorModel.js";
 
 export const protect = catchAsync(async (req, res, next) => {
-  // 1) Getting token and check of it's there
   let token;
-  // console.log("headers", req.headers.authorization);
+
+  // 1) Check if token is in cookies first
+  if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+    // console.log("JWT token found in cookies:", token);
+  }
+
+  // 2) If token is not found in cookies, check the Authorization header
   if (
+    !token &&
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
+    // console.log("JWT token found in Authorization header:", token);
   }
 
+  // 3) If no token is found in either, return an error
   if (!token) {
     return next(
       new AppError("You are not logged in! Please log in to get access.", 401)

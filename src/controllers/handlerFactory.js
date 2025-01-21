@@ -4,7 +4,6 @@ import APIFeatures from "../utils/apiFeatures.js";
 
 export const getAll = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
-    console.log("Model.modelName", Model.modelName);
     let filter = {};
 
     if (req.params.id && Model.modelName === "Blog") {
@@ -14,7 +13,6 @@ export const getAll = (Model, popOptions) =>
       // Handle blog comments (e.g., /:blogId/)
       filter = { blog: req.params.blogId };
     }
-    console.log("filter", filter);
 
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
@@ -25,7 +23,6 @@ export const getAll = (Model, popOptions) =>
     if (popOptions) features.query = features.query.populate(popOptions);
 
     const doc = await features.query;
-    console.log("doc", doc);
 
     if (!doc || doc.length === 0) {
       return next(
@@ -41,7 +38,6 @@ export const getAll = (Model, popOptions) =>
       },
     });
   });
-
 
 export const getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
@@ -91,21 +87,6 @@ export const createOne = (Model) =>
     });
   });
 
-
-export const deleteOne = (Model) =>
-  catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndDelete(req.params.id);
-
-    if (!doc) {
-      return next(new AppError("No document found with that ID", 404));
-    }
-
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  });
-
 export const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
@@ -122,6 +103,20 @@ export const updateOne = (Model) =>
       data: {
         data: doc,
       },
+    });
+  });
+
+export const deleteOne = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.findByIdAndDelete(req.params.id);
+
+    if (!doc) {
+      return next(new AppError("No document found with that ID", 404));
+    }
+
+    res.status(204).json({
+      status: "success",
+      data: null,
     });
   });
 

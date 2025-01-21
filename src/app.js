@@ -14,6 +14,7 @@ import mentorRoutes from "./routes/mentorRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import materialRoutes from "./routes/materialRoutes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.use("/api", limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: "16kb" }));
+// Parse cookies
+app.use(cookieParser()); 
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());

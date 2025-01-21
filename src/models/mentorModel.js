@@ -15,7 +15,7 @@ const mentorSchema = new Schema(
       unique: true,
       validate: [validator.isEmail, "Please provide a valid email"],
     },
-    profile_image: {
+    profile_imageURL: {
       type: String,
       default: "default.jpg",
     },

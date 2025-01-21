@@ -63,7 +63,7 @@ export const getS3URL = (fileName) => {
 };
 
 export const getUploadS3URL = catchAsync(async (req, res, next) => {
-  const { filename, contentType } = req.body;
+  const { filename, contentType, destination } = req.body;
 
   if (!filename || !contentType) {
     return next(new AppError("Filename and ContentType are required", 400));
@@ -77,7 +77,7 @@ export const getUploadS3URL = catchAsync(async (req, res, next) => {
     },
   });
 
-  const path = `blogs/${Date.now()}-${filename}`;
+  const path = `${destination}/${Date.now()}-${filename}`;
 
   const params = {
     Bucket: process.env.BUCKET_NAME,

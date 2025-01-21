@@ -1,31 +1,14 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { Mentor } from "../models/mentorModel.js";
-import { getS3URL, uploadToS3 } from "../helpers/s3.js";
+import { getAll, updateOne } from "./handlerFactory.js";
 import mongoose from "mongoose";
 
-const updateMentorsWithSignedURLs = (mentors) => {
-  return Promise.all(
-    mentors.map((mentor) => {
-      return getS3URL(mentor.profile_image)
-        .then((signedUrl) => {
-          // console.log("Signed URL:", signedUrl);
 
-          return {
-            ...mentor._doc, // Use `_doc` for plain object in Mongoose
-            profile_image: signedUrl,
-          };
-        })
-        .catch((err) => {
-          console.error(
-            `Error generating signed URL for ${mentor.profile_image}`,
-            err
-          );
-          return mentor;
-        });
-    })
-  );
-};
+
+export const updateMentor = updateOne(Mentor);
+
+export const getAllMentor = getAll(Mentor);
 
 export const getUnavailability = catchAsync(async (req, res, next) => {
   const { id } = req.params;
@@ -36,7 +19,7 @@ export const getUnavailability = catchAsync(async (req, res, next) => {
   } catch (error) {
     return next(new AppError("Invalid Mentor ID", 400)); // Handle invalid ObjectId
   }
-  
+
   const mentor = await Mentor.aggregate([
     {
       $match: { _id: objectId },
@@ -59,57 +42,6 @@ export const getUnavailability = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       unavailability,
-    },
-  });
-});
-
-export const getAllMentor = catchAsync(async (req, res, next) => {
-  const mentors = await Mentor.find();
-  console.log("Mentors", mentors);
-
-  if (!mentors) {
-    return next(new AppError("No mentors found", 404));
-  }
-
-  const updatedMentors = await updateMentorsWithSignedURLs(mentors);
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      mentors: updatedMentors,
-    },
-  });
-});
-
-export const updateMentor = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const { bio, description, skills } = req.body;
-  const file = req.file;
-
-  if (!file) {
-    return next(new AppError("No file uploaded.", 400));
-  }
-  await uploadToS3(req.file, mentors);
-
-  const updatedMentor = await Mentor.findByIdAndUpdate(
-    id,
-    {
-      ...(bio && { bio }),
-      ...(description && { description }),
-      ...(skills && { skills }),
-      ...(file.originalname && { profile_image: file.originalname }),
-    },
-    { new: true, runValidators: true }
-  );
-
-  if (!updatedMentor) {
-    return next(new AppError("No mentor found with that ID", 404));
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      mentor: updatedMentor,
     },
   });
 });

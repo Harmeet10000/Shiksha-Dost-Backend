@@ -1,14 +1,15 @@
 
 import express from "express";
-import { uploadFile } from "../controllers/materialController.js";
-import { upload } from "../helpers/s3.js";
+import { addMaterial } from "../controllers/materialController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
+import { getUploadS3URL } from "../helpers/s3.js";
 
 const router = express.Router();
 
 router.use(protect);
 router.use(restrictTo("admin"));
 
-router.post("/upload", upload.single("file"), uploadFile);
+router.post("/getUploadS3URL", getUploadS3URL);
+router.post("/addMaterial", addMaterial);
 
 export default router;
