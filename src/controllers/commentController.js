@@ -1,41 +1,9 @@
-import catchAsync from "../utils/catchAsync.js";
-import AppError from "../utils/appError.js";
+
 import { Comment } from "../models/commentModel.js";
+import { createOne, deleteOne, getAll } from "./handlerFactory.js";
 
-export const getBlogComments = catchAsync(async (req, res, next) => {
-  const comments = await Comment.find({ blog: req.params.blogId })
-    .populate("user")
-    .sort({ createdAt: -1 });
-  res.status(200).json({
-    status: "success",
-    data: {
-      comments,
-    },
-  });
-});
+export const getBlogComments = getAll(Comment, "user");
 
-export const addComment = catchAsync(async (req, res, next) => {
-  const newComment = await Comment.create({
-    user: req.user._id,
-    blog: req.params.blogId,
-    desc: req.body.desc,
-  });
-  res.status(201).json({
-    status: "success",
-    data: {
-      comment: newComment,
-    },
-  });
-});
+export const addComment = createOne(Comment);
 
-export const deleteComment = catchAsync(async (req, res, next) => {
-  const comment = await Comment.findByIdAndDelete(req.params.id);
-  if (!comment) {
-    return next(new AppError("No comment found with that ID", 404));
-  }
-
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+export const deleteComment = deleteOne(Comment);
