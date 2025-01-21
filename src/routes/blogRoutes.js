@@ -6,6 +6,7 @@ import {
   updateBlog,
   deleteBlog,
   featureBlog,
+  getMentorBlogs,
 } from "../controllers/blogController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 import { increaseVisits } from "../middlewares/increaseVisits.js";
@@ -25,5 +26,6 @@ router.post("/createBlog", createBlog);
 router.delete("/:id", deleteBlog);
 router.patch("/:id", updateBlog);
 router.patch("/feature/:id", featureBlog);
+router.get("/getMentorBlogs/:id", getMentorBlogs);
 
 export default router;

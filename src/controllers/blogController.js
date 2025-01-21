@@ -38,15 +38,7 @@ export const getBlog = catchAsync(async (req, res, next) => {
 export const createBlog = catchAsync(async (req, res, next) => {
   let slug = req.body.title.replace(/ /g, "-").toLowerCase();
 
-  let existingBlog = await Blog.findOne({ slug });
-
-  let counter = 2;
-
-  while (existingBlog) {
-    slug = `${slug}-${counter}`;
-    existingBlog = await Blog.findOne({ slug });
-    counter++;
-  }
+  slug = `${slug}-${Date.now()}`;
 
   const newBlog = new Blog({ author: req.user._id, slug, ...req.body });
 
@@ -101,3 +93,21 @@ export const updateBlog = catchAsync(async (req, res, next) => {
   });
 });
 
+
+export const getMentorBlogs = catchAsync(async (req, res, next) => {
+  const { id } = req.params; 
+ 
+  const blogs = await Blog.find({ author: id });
+
+   if (!blogs || blogs.length === 0) {
+    return next(new AppError("No blogs found for the specified mentor", 404));
+  }
+
+   res.status(200).json({
+    status: "success",
+    results: blogs.length,
+    data: {
+      blogs,
+    },
+  });
+});

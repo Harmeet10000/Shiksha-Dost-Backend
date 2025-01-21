@@ -1,22 +1,16 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import {
-  getAll,
-  getOne,
-  deleteOne,
-  updateOne,
-  createOne,
-  blockOne,
-} from "../services/handlerFactory.js";
 import { User } from "../models/userModel.js";
+import { blockOne, deleteOne } from "./handlerFactory.js";
 import { Mentor } from "../models/mentorModel.js";
 
-export const blockMentor = blockOne(Mentor);
-export const deleteMentor = deleteOne(Mentor);
 
 export const blockStudent = blockOne(User);
 export const deleteStudent = deleteOne(User);
 
+
+export const blockMentor = blockOne(Mentor);
+export const deleteMentor = deleteOne(Mentor);
 
 // export const updateMe = catchAsync(async (req, res, next) => {
 
