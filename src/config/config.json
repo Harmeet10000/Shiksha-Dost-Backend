@@ -1,18 +1,578 @@
-{
-    "CORSRules": [
-        {
-            "AllowedOrigins": [
-                "*"
-            ],
-            "AllowedMethods": [
-                "GET",
-                "POST",
-                "PUT"
-            ],
-            "AllowedHeaders": [
-                "*"
-            ],
-            "MaxAgeSeconds": 3000
-        }
-    ]
-}
+[
+    {
+        "Collection": "mentors",
+        "data": [
+            {
+                "_id": {
+                    "$oid": "678a6f8a1a9915491a7de368"
+                },
+                "name": "Harmeet3",
+                "email": "harmeet3@gmail.com",
+                "skills": [
+                    "JavaScript",
+                    "React",
+                    "Node.js",
+                    "MongoDB",
+                    "Docker",
+                    "AWS",
+                    "GraphQL"
+                ],
+                "role": "mentor",
+                "password": "$2a$10$W5qC0NPpeNEyj1NR/G/kueCdDnP//wsfFmyN7w2lR2HR/SZv3ZR2e",
+                "totalMentees": 0,
+                "revenue": {
+                    "weekly": {},
+                    "monthly": {}
+                },
+                "active": true,
+                "unavailability": [
+                    {
+                        "date": {
+                            "$date": "2025-01-28T00:00:00.000Z"
+                        },
+                        "slots": [
+                            {
+                                "start": "09:00 AM",
+                                "end": "10:00 AM",
+                                "_id": {
+                                    "$oid": "678f6c02b5381dbca462578a"
+                                }
+                            },
+                            {
+                                "start": "02:00 PM",
+                                "end": "03:00 PM",
+                                "_id": {
+                                    "$oid": "678f6c02b5381dbca462578b"
+                                }
+                            }
+                        ],
+                        "_id": {
+                            "$oid": "678f6c02b5381dbca4625789"
+                        }
+                    }
+                ],
+                "__v": 1,
+                "bio": "Passionate software developer with a love for creating scalable and efficient solutions.",
+                "description": "I have 5+ years of experience in full-stack development, specializing in building responsive web applications using modern frameworks and tools. I enjoy working on challenging projects that require creative problem-solving and collaboration.",
+                "profile_imageURL": "https://randomuser.me/api/portraits/men/75.jpg"
+            },
+            {
+                "_id": {
+                    "$oid": "678a81d2353446f2a502d92d"
+                },
+                "name": "Harmeet4",
+                "email": "harmeet4@gmail.com",
+                "skills": [
+                    "JavaScript",
+                    "React",
+                    "Node.js",
+                    "MongoDB",
+                    "Docker",
+                    "AWS",
+                    "GraphQL"
+                ],
+                "role": "mentor",
+                "password": "$2a$10$O5i3sTVgMGJDaRdaOzzR3OpfgTB4SdwFrSabkJkAbvaIm65z.yo9i",
+                "totalMentees": 0,
+                "revenue": {
+                    "weekly": {},
+                    "monthly": {}
+                },
+                "active": true,
+                "unavailability": [
+                    {
+                        "date": {
+                            "$date": "2025-01-23T00:00:00.000Z"
+                        },
+                        "slots": [
+                            {
+                                "start": "09:00 AM",
+                                "end": "10:00 AM",
+                                "_id": {
+                                    "$oid": "678bb256c8c119d8631c5035"
+                                }
+                            },
+                            {
+                                "start": "02:00 PM",
+                                "end": "03:00 PM",
+                                "_id": {
+                                    "$oid": "678bb256c8c119d8631c5036"
+                                }
+                            }
+                        ],
+                        "_id": {
+                            "$oid": "678bb256c8c119d8631c5034"
+                        }
+                    },
+                    {
+                        "date": {
+                            "$date": "2025-01-27T00:00:00.000Z"
+                        },
+                        "slots": [
+                            {
+                                "start": "09:00 AM",
+                                "end": "10:00 AM",
+                                "_id": {
+                                    "$oid": "678f694c768bd3a464f5dbce"
+                                }
+                            },
+                            {
+                                "start": "02:00 PM",
+                                "end": "03:00 PM",
+                                "_id": {
+                                    "$oid": "678f694c768bd3a464f5dbcf"
+                                }
+                            }
+                        ],
+                        "_id": {
+                            "$oid": "678f694c768bd3a464f5dbcd"
+                        }
+                    },
+                    {
+                        "date": {
+                            "$date": "2025-01-28T00:00:00.000Z"
+                        },
+                        "slots": [
+                            {
+                                "start": "09:00 AM",
+                                "end": "10:00 AM",
+                                "_id": {
+                                    "$oid": "678f6968768bd3a464f5dbe3"
+                                }
+                            },
+                            {
+                                "start": "02:00 PM",
+                                "end": "03:00 PM",
+                                "_id": {
+                                    "$oid": "678f6968768bd3a464f5dbe4"
+                                }
+                            }
+                        ],
+                        "_id": {
+                            "$oid": "678f6968768bd3a464f5dbe2"
+                        }
+                    }
+                ],
+                "__v": 4,
+                "bio": "Passionate software developer with a love for creating scalable and efficient solutions.",
+                "description": "I have 5+ years of experience in full-stack development, specializing in building responsive web applications using modern frameworks and tools. I enjoy working on challenging projects that require creative problem-solving and collaboration."
+            }
+        ]
+    }
+],
+[
+    {
+        "Collection": "users",
+        "data": [
+            {
+                "_id": {
+                    "$oid": "6769ba3717f7374e1763d654"
+                },
+                "name": "Harmeet",
+                "email": "harmeet@gmail.com",
+                "profile_image": "default.jpg",
+                "role": "student",
+                "password": "$2a$10$fj0d8vsRC.An2dEzHB7S6ecA8n0HVnRvhPOtpWpsjHKiDkolCux.G",
+                "active": true,
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "6769bb9717f7374e1763d656"
+                },
+                "name": "Harmeet2",
+                "email": "harmeet2@gmail.com",
+                "profile_image": "default.jpg",
+                "role": "admin",
+                "password": "$2a$10$vb.tcNKsTHHHQpE9cAZ9D.EIJoVFW4e8mHwguNsByEvdJKk8GyHMO",
+                "active": true,
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678957e755a75f31c1cfba46"
+                },
+                "name": "Harmeet",
+                "email": "21bcs039@smvdu.ac.in",
+                "profile_image": "default.jpg",
+                "role": "student",
+                "password": "$2a$10$JAo4UITYmB8cbZxzeMAf0eQ4WX5ZZ9NXThaLjCcgit0XIMl2gIBtC",
+                "active": true,
+                "isVerified": false,
+                "__v": 0,
+                "emailVerificationExpires": {
+                    "$date": "2025-01-17T19:03:04.040Z"
+                },
+                "emailVerificationToken": "2eb8a7fd0822fd35ccd086d0c8ecbd92c12783746e002f15f03f3a96c87a154e"
+            }
+        ]
+    }
+],
+[
+    {
+        "Collection": "materials",
+        "data": [
+            {
+                "_id": {
+                    "$oid": "678f8ae371b900318676010e"
+                },
+                "category": "Science",
+                "class": "10th",
+                "subject": "Physics",
+                "chapter": "Gravitation",
+                "topicName": "Newton's Law of Universal Gravitation",
+                "year": 2025,
+                "S3url": "https://shikshadost-studymaterial.s3.ap-south-1.amazonaws.com/blogs/1737448592362-Screenshot+from+2024-12-07+13-23-56.png",
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f8b0965b11f46e71186c6"
+                },
+                "category": "Science",
+                "class": "10th",
+                "subject": "Physics",
+                "chapter": "Gravitation",
+                "topicName": "Newton's Law of Universal Gravitation",
+                "year": 2025,
+                "S3url": "https://shikshadost-studymaterial.s3.ap-south-1.amazonaws.com/blogs/1737448592362-Screenshot+from+2024-12-07+13-23-56.png",
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f9b3582a0c18381743e18"
+                },
+                "category": "Mathematics",
+                "class": "12th",
+                "subject": "Algebra",
+                "chapter": "Quadratic Equations",
+                "topicName": "Solving Quadratic Equations",
+                "year": 2025,
+                "S3url": "https://shikshadost-studymaterial.s3.ap-south-1.amazonaws.com/blogs/1678324532362-example1.png",
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f9b4182a0c18381743e1b"
+                },
+                "category": "Social Science",
+                "class": "8th",
+                "subject": "History",
+                "chapter": "The French Revolution",
+                "topicName": "Causes of the Revolution",
+                "year": 2025,
+                "S3url": "https://shikshadost-studymaterial.s3.ap-south-1.amazonaws.com/blogs/1747559634362-example2.png",
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f9b4c82a0c18381743e1e"
+                },
+                "category": "Biology",
+                "class": "11th",
+                "subject": "Zoology",
+                "chapter": "Animal Kingdom",
+                "topicName": "Classification of Animals",
+                "year": 2025,
+                "S3url": "https://shikshadost-studymaterial.s3.ap-south-1.amazonaws.com/blogs/1757668745362-example3.png",
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f9b5782a0c18381743e21"
+                },
+                "category": "Chemistry",
+                "class": "9th",
+                "subject": "Physical Chemistry",
+                "chapter": "States of Matter",
+                "topicName": "Gas Laws",
+                "year": 2025,
+                "S3url": "https://shikshadost-studymaterial.s3.ap-south-1.amazonaws.com/blogs/1767779856362-example4.png",
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f9b5e82a0c18381743e24"
+                },
+                "category": "English",
+                "class": "7th",
+                "subject": "Grammar",
+                "chapter": "Tenses",
+                "topicName": "Present Perfect Tense",
+                "year": 2025,
+                "S3url": "https://shikshadost-studymaterial.s3.ap-south-1.amazonaws.com/blogs/1777880967362-example5.png",
+                "__v": 0
+            }
+        ]
+    }
+],
+[
+    {
+        "Collection": "comments",
+        "data": [
+            {
+                "_id": {
+                    "$oid": "678cf7572e068a16b03d12b3"
+                },
+                "user": {
+                    "$oid": "6769bb9717f7374e1763d656"
+                },
+                "blog": {
+                    "$oid": "678cf0031e67e1ec98708242"
+                },
+                "desc": "This is a sample comment.",
+                "createdAt": {
+                    "$date": "2025-01-19T13:00:07.570Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-19T13:00:07.570Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678cf7582e068a16b03d12b6"
+                },
+                "user": {
+                    "$oid": "6769bb9717f7374e1763d656"
+                },
+                "blog": {
+                    "$oid": "678cf0031e67e1ec98708242"
+                },
+                "desc": "This is a sample comment.",
+                "createdAt": {
+                    "$date": "2025-01-19T13:00:08.467Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-19T13:00:08.467Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f7f6fac0b064e6d804a28"
+                },
+                "user": {
+                    "$oid": "6769bb9717f7374e1763d656"
+                },
+                "blog": {
+                    "$oid": "678f6d6767a0b8a0af26dcba"
+                },
+                "desc": "This is a sample comment.",
+                "createdAt": {
+                    "$date": "2025-01-21T11:05:19.159Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-21T11:05:19.159Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f7f9eac0b064e6d804a2b"
+                },
+                "user": {
+                    "$oid": "6769bb9717f7374e1763d656"
+                },
+                "blog": {
+                    "$oid": "678f6d6767a0b8a0af26dcba"
+                },
+                "desc": "This is a sample comment.2",
+                "createdAt": {
+                    "$date": "2025-01-21T11:06:06.868Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-21T11:06:06.868Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f7fa3ac0b064e6d804a2e"
+                },
+                "user": {
+                    "$oid": "6769bb9717f7374e1763d656"
+                },
+                "blog": {
+                    "$oid": "678f6d6767a0b8a0af26dcba"
+                },
+                "desc": "This is a sample comment.3",
+                "createdAt": {
+                    "$date": "2025-01-21T11:06:11.591Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-21T11:06:11.591Z"
+                },
+                "__v": 0
+            }
+        ]
+    }
+],
+[
+    {
+        "Collection": "blogs",
+        "data": [
+            {
+                "_id": {
+                    "$oid": "678cf0161e67e1ec98708247"
+                },
+                "mentor": {
+                    "$oid": "60c72b2f9b1e8c55d8b8b9a5"
+                },
+                "img": "http://example.com/image.jpg",
+                "title": "Sample Blog Title",
+                "slug": "sample-blog-title-2",
+                "desc": "This is a description of the sample blog.",
+                "category": "technology",
+                "content": "This is the content of the sample blog.",
+                "isFeatured": true,
+                "visit": 1,
+                "createdAt": {
+                    "$date": "2025-01-19T12:29:10.416Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-19T12:30:46.108Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678cf03ef15e49057deb67d4"
+                },
+                "mentor": {
+                    "$oid": "60c72b2f9b1e8c55d8b8b9a5"
+                },
+                "img": "http://example.com/image.jpg",
+                "title": "Sample Blog Title",
+                "slug": "sample-blog-title-2-3",
+                "desc": "This is a description of the sample blog.",
+                "category": "technology",
+                "content": "This is the content of the sample blog.",
+                "isFeatured": true,
+                "visit": 2,
+                "createdAt": {
+                    "$date": "2025-01-19T12:29:50.488Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-19T13:11:23.328Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678d024f60317f887ac5683c"
+                },
+                "author": {
+                    "$oid": "678a6f8a1a9915491a7de368"
+                },
+                "img": "http://example.com/image.jpg",
+                "title": "Sample Blog Title",
+                "slug": "sample-blog-title-2-3-4",
+                "desc": "This is a description of the sample blog.",
+                "category": "technology",
+                "content": "&lt;h1>Welcome to the Blog&lt;/h1>    &lt;p>This is a &lt;strong>bold&lt;/strong> and &lt;em>italicized&lt;/em> introduction to the blog.&lt;/p>    &lt;h2>Subheading&lt;/h2>    &lt;p>This paragraph has &lt;u>underlined text&lt;/u> for emphasis and uses a &lt;span style='font-size: 18px;'>larger font size&lt;/span>.&lt;/p>    &lt;h3>Key Points:&lt;/h3>    &lt;ul>        &lt;li>&lt;strong>Point 1:&lt;/strong> This is a &lt;em>point with emphasis&lt;/em>.&lt;/li>        &lt;li>&lt;strong>Point 2:&lt;/strong> This point has &lt;u>underlined text&lt;/u> and &lt;span style='color: red;'>colored text&lt;/span>.&lt;/li>    &lt;/ul>    &lt;h4>Conclusion&lt;/h4>    &lt;p>End your blog with &lt;strong>impactful statements&lt;/strong> like this one!&lt;/p>",
+                "isFeatured": true,
+                "visit": 0,
+                "createdAt": {
+                    "$date": "2025-01-19T13:46:55.657Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-19T13:46:55.657Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678d02a2edc647d56f813cd3"
+                },
+                "author": {
+                    "$oid": "678a6f8a1a9915491a7de368"
+                },
+                "img": "http://example.com/image.jpg",
+                "title": "Sample Blog Title",
+                "slug": "sample-blog-title-2-3-4-5",
+                "desc": "This is a description of the sample blog.",
+                "category": "technology",
+                "content": "&lt;h1>Welcome to the Blog&lt;/h1>    &lt;p>This is a &lt;strong>bold&lt;/strong> and &lt;em>italicized&lt;/em> introduction to the blog.&lt;/p>    &lt;h2>Subheading&lt;/h2>    &lt;p>This paragraph has &lt;u>underlined text&lt;/u> for emphasis and uses a &lt;span style='font-size: 18px;'>larger font size&lt;/span>.&lt;/p>    &lt;h3>Key Points:&lt;/h3>    &lt;ul>        &lt;li>&lt;strong>Point 1:&lt;/strong> This is a &lt;em>point with emphasis&lt;/em>.&lt;/li>        &lt;li>&lt;strong>Point 2:&lt;/strong> This point has &lt;u>underlined text&lt;/u> and &lt;span style='color: red;'>colored text&lt;/span>.&lt;/li>    &lt;/ul>    &lt;h4>Conclusion&lt;/h4>    &lt;p>End your blog with &lt;strong>impactful statements&lt;/strong> like this one!&lt;/p>",
+                "isFeatured": false,
+                "visit": 0,
+                "createdAt": {
+                    "$date": "2025-01-19T13:48:18.533Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-19T13:48:18.533Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f6d343e281bd99f61a42a"
+                },
+                "author": {
+                    "$oid": "678a81d2353446f2a502d92d"
+                },
+                "img": "http://example.com/image.jpg",
+                "title": "Sample Blog Title2",
+                "slug": "sample-blog-title2",
+                "desc": "This is a description of the sample blog.",
+                "category": "technology",
+                "content": "&lt;h1>Welcome to the Blog&lt;/h1>    &lt;p>This is a &lt;strong>bold&lt;/strong> and &lt;em>italicized&lt;/em> introduction to the blog.&lt;/p>    &lt;h2>Subheading&lt;/h2>    &lt;p>This paragraph has &lt;u>underlined text&lt;/u> for emphasis and uses a &lt;span style='font-size: 18px;'>larger font size&lt;/span>.&lt;/p>    &lt;h3>Key Points:&lt;/h3>    &lt;ul>        &lt;li>&lt;strong>Point 1:&lt;/strong> This is a &lt;em>point with emphasis&lt;/em>.&lt;/li>        &lt;li>&lt;strong>Point 2:&lt;/strong> This point has &lt;u>underlined text&lt;/u> and &lt;span style='color: red;'>colored text&lt;/span>.&lt;/li>    &lt;/ul>    &lt;h4>Conclusion&lt;/h4>    &lt;p>End your blog with &lt;strong>impactful statements&lt;/strong> like this one!&lt;/p>",
+                "isFeatured": false,
+                "visit": 0,
+                "createdAt": {
+                    "$date": "2025-01-21T09:47:32.029Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-21T09:47:32.029Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f6d6767a0b8a0af26dcba"
+                },
+                "author": {
+                    "$oid": "678a81d2353446f2a502d92d"
+                },
+                "img": "http://example.com/image.jpg",
+                "title": "Sample Blog Title2",
+                "slug": "sample-blog-title2-1737452903055",
+                "desc": "This is a description of the sample blog.",
+                "category": "technology",
+                "content": "&lt;h1>Welcome to the Blog&lt;/h1>    &lt;p>This is a &lt;strong>bold&lt;/strong> and &lt;em>italicized&lt;/em> introduction to the blog.&lt;/p>    &lt;h2>Subheading&lt;/h2>    &lt;p>This paragraph has &lt;u>underlined text&lt;/u> for emphasis and uses a &lt;span style='font-size: 18px;'>larger font size&lt;/span>.&lt;/p>    &lt;h3>Key Points:&lt;/h3>    &lt;ul>        &lt;li>&lt;strong>Point 1:&lt;/strong> This is a &lt;em>point with emphasis&lt;/em>.&lt;/li>        &lt;li>&lt;strong>Point 2:&lt;/strong> This point has &lt;u>underlined text&lt;/u> and &lt;span style='color: red;'>colored text&lt;/span>.&lt;/li>    &lt;/ul>    &lt;h4>Conclusion&lt;/h4>    &lt;p>End your blog with &lt;strong>impactful statements&lt;/strong> like this one!&lt;/p>",
+                "isFeatured": false,
+                "visit": 0,
+                "createdAt": {
+                    "$date": "2025-01-21T09:48:23.061Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-21T09:48:23.061Z"
+                },
+                "__v": 0
+            },
+            {
+                "_id": {
+                    "$oid": "678f7828aaf6ca369d693557"
+                },
+                "author": {
+                    "$oid": "678a81d2353446f2a502d92d"
+                },
+                "img": "http://example.com/image.jpg",
+                "title": "Updated Blog Title2",
+                "slug": "sample-blog-title2-1737455656623",
+                "desc": "This is an updated description of the blog.",
+                "category": "technology",
+                "content": "This is the updated content of the blog.",
+                "isFeatured": false,
+                "visit": 3,
+                "createdAt": {
+                    "$date": "2025-01-21T10:34:16.628Z"
+                },
+                "updatedAt": {
+                    "$date": "2025-01-21T10:42:45.769Z"
+                },
+                "__v": 0
+            }
+        ]
+    }
+]

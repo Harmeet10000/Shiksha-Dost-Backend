@@ -2,7 +2,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import { sendEmail } from "../helpers/email.js";
+import { Resendmail } from "../helpers/email.js";
 import { Mentor } from "../models/mentorModel.js";
 import { User } from "../models/userModel.js";
 
@@ -42,17 +42,11 @@ const createSendEmail = async (user, req, next) => {
     const verificationToken = user.createEmailVerificationToken();
     await user.save({ validateBeforeSave: false });
 
-    const baseUrl = req.get("Origin") || "http://localhost:5173";
+    const baseUrl = process.env.FRONTEND_URL;
     const verificationURL = `${baseUrl}/verify-email/${verificationToken}`;
     // console.log(verificationURL);
 
-    const message = `
-      <p>Hello ${user.name},</p>
-      <p>Please verify your email address by clicking on the link below:</p>
-      <a href="${verificationURL}" target="_blank">${verificationURL}</a>
-    `;
-
-    await sendEmail(user.email, "Verify Your Email Address", message);
+    await Resendmail(user.name, user.email, verificationURL);
   } catch (err) {
     user.emailVerificationToken = undefined;
     user.emailVerificationExpires = undefined;
@@ -94,7 +88,6 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
-  console.log(hashedToken);
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
     emailVerificationExpires: { $gt: Date.now() },
@@ -106,7 +99,6 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
       message: "Token is invalid or has expired",
     });
   }
-
   user.isVerified = true;
   user.emailVerificationToken = undefined;
   user.emailVerificationExpires = undefined;

@@ -18,10 +18,10 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/loginMentor", loginMentor);
 router.post("/signupMentor", signupMentor);
+router.get("/verify-email/:token", verifyEmail);
 
 router.use(protect);
 
-router.get("/verify-email/:token", verifyEmail);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 router.patch("/updateMyPassword", updatePassword);
