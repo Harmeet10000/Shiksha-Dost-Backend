@@ -13,11 +13,64 @@ const sesClient = new SESClient({
   },
 });
 
-export const Resendmail = catchAsync(async (name, to, verificationURL) => {
-  const resend = new Resend("re_dPQCac4W_8N4GP3V3eGJE4trqEZsLnt3Q");
+export const Resendmail = catchAsync(
+  async (name, to, verificationURL) => {
+    const resend = new Resend("re_dPQCac4W_8N4GP3V3eGJE4trqEZsLnt3Q");
 
-  // console.log("Resend", to, verificationURL);
-  const htmlContent = `
+    let htmlContent = "";
+    let subject = "";
+
+    if (!verificationURL) {
+      // Mentor case
+      htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            color: #2c5282;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2c5282;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <h1 class='header'>Welcome to ShikshaDost!</h1>
+        <p>Hello ${name},</p>
+        <p>Welcome to ShikshaDost! We are thrilled to have you join us as a mentor. Your expertise and guidance will make a meaningful impact on our community.</p>
+        <p><a href='http://localhost:5173/register' class='button'>Login to Your Account</a></p>
+        <p><small>Or copy and paste this link in your browser:<br>http://localhost:5173/register</small></p>
+        <p>If you have any questions or need assistance, feel free to reach out to us.</p>
+        <div class='footer'>
+            <p>Best regards,<br>Team ShikshaDost</p>
+        </div>
+    </div>
+</body>
+</html>`;
+      subject = "Welcome to the ShikshaDost Platform!";
+    } else {
+      // Student case
+      htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,25 +112,26 @@ export const Resendmail = catchAsync(async (name, to, verificationURL) => {
         </div>
     </div>
 </body>
-</html>
-`;
+</html>`;
+      subject = "Verify Your Email Address";
+    }
 
-  const message = `Please verify your email by clicking on the following link: ${verificationURL}`;
+    try {
+      const ans = await resend.emails.send({
+        from: "contact@shikshadost.com",
+        to: to,  
+        subject: subject,
+        html: htmlContent,
+      });
 
-  try {
-    const ans = await resend.emails.send({
-      from: "contact@shikshadost.com",
-      to: to, // Use the 'to' parameter passed to the function
-      subject: "Verify Your Email Address",
-      html: htmlContent,
-    });
-
-    console.log("Verification email sent successfully!", ans);
-  } catch (error) {
-    console.error("Error sending verification email:", error);
-    throw new Error("Failed to send verification email");
+      console.log("Email sent successfully!", ans);
+    } catch (error) {
+      console.error("Error sending email:", error);
+      throw new Error("Failed to send email");
+    }
   }
-});
+);
+
 
 // Function to send welcome email
 export const sendWelcomeEmail = catchAsync(async (recipientEmail, name) => {

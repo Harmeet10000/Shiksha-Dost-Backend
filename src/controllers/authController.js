@@ -46,7 +46,7 @@ const createSendEmail = async (user, req, next) => {
     const verificationURL = `${baseUrl}/verify-email/${verificationToken}`;
     // console.log(verificationURL);
 
-    await Resendmail(user.name, user.email, verificationURL);
+    await Resendmail(user.name, user.email, verificationURL );
   } catch (err) {
     user.emailVerificationToken = undefined;
     user.emailVerificationExpires = undefined;
@@ -77,8 +77,8 @@ export const signupMentor = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
-  // console.log(newUser);
-  await createSendEmail(newUser, req, next);
+  console.log(newUser.name, newUser.email, newUser.role);
+  await Resendmail(newUser.name, newUser.email, "");
   createSendToken(newUser, 201, res);
 });
 
