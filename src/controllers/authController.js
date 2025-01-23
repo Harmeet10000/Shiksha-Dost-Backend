@@ -45,8 +45,14 @@ const createSendEmail = async (user, req, next) => {
     const baseUrl = process.env.FRONTEND_URL;
     const verificationURL = `${baseUrl}/verify-email/${verificationToken}`;
     // console.log(verificationURL);
+    let info = {
+      name: user.name,
+      to: user.email,
+      verificationURL: verificationURL,
+      role: user.role,
+    };
 
-    await Resendmail(user.name, user.email, verificationURL );
+    await Resendmail(info);
   } catch (err) {
     user.emailVerificationToken = undefined;
     user.emailVerificationExpires = undefined;
@@ -77,8 +83,15 @@ export const signupMentor = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
-  console.log(newUser.name, newUser.email, newUser.role);
-  await Resendmail(newUser.name, newUser.email, "");
+  // console.log(newUser.name, newUser.email, newUser.role);
+  let info = {
+    name: newUser.name,
+    password: req.body.password,
+    to: newUser.email,
+    verificationURL: "",
+    role: newUser.role,
+  };
+  await Resendmail(info);
   createSendToken(newUser, 201, res);
 });
 

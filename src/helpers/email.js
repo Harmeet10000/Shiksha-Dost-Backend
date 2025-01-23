@@ -13,16 +13,16 @@ const sesClient = new SESClient({
   },
 });
 
-export const Resendmail = catchAsync(
-  async (name, to, verificationURL) => {
-    const resend = new Resend("re_dPQCac4W_8N4GP3V3eGJE4trqEZsLnt3Q");
+export const Resendmail = catchAsync(async (info) => {
+const { name, to, verificationURL, role, password } = info;
+const resend = new Resend("re_dPQCac4W_8N4GP3V3eGJE4trqEZsLnt3Q");
 
-    let htmlContent = "";
-    let subject = "";
+let htmlContent = "";
+let subject = "";
 
-    if (!verificationURL) {
-      // Mentor case
-      htmlContent = `<!DOCTYPE html>
+if (role === "mentor") {
+  // Mentor case
+  htmlContent = `<!DOCTYPE html>
 <html>
 <head>
     <style>
@@ -58,6 +58,8 @@ export const Resendmail = catchAsync(
         <h1 class='header'>Welcome to ShikshaDost!</h1>
         <p>Hello ${name},</p>
         <p>Welcome to ShikshaDost! We are thrilled to have you join us as a mentor. Your expertise and guidance will make a meaningful impact on our community.</p>
+        <p><strong>Your Login Details:</strong></p>
+        <p>Email: ${to}<br>Password: ${password}</p>
         <p><a href='http://localhost:5173/register' class='button'>Login to Your Account</a></p>
         <p><small>Or copy and paste this link in your browser:<br>http://localhost:5173/register</small></p>
         <p>If you have any questions or need assistance, feel free to reach out to us.</p>
@@ -67,10 +69,10 @@ export const Resendmail = catchAsync(
     </div>
 </body>
 </html>`;
-      subject = "Welcome to the ShikshaDost Platform!";
-    } else {
-      // Student case
-      htmlContent = `
+  subject = "Welcome to the ShikshaDost Platform!";
+} else if (role === "student") {
+  // Student case
+  htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -113,25 +115,23 @@ export const Resendmail = catchAsync(
     </div>
 </body>
 </html>`;
-      subject = "Verify Your Email Address";
-    }
+  subject = "Verify Your Email Address";
+}
 
-    try {
-      const ans = await resend.emails.send({
-        from: "contact@shikshadost.com",
-        to: to,  
-        subject: subject,
-        html: htmlContent,
-      });
+  try {
+    const ans = await resend.emails.send({
+      from: "contact@shikshadost.com",
+      to: to,
+      subject: subject,
+      html: htmlContent,
+    });
 
-      console.log("Email sent successfully!", ans);
-    } catch (error) {
-      console.error("Error sending email:", error);
-      throw new Error("Failed to send email");
-    }
+    console.log("Email sent successfully!", ans);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email");
   }
-);
-
+});
 
 // Function to send welcome email
 export const sendWelcomeEmail = catchAsync(async (recipientEmail, name) => {
