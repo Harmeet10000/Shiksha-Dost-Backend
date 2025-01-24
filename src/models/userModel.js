@@ -34,6 +34,18 @@ const userSchema = new Schema(
       type: [String],
       default: [],
     },
+    solvedDPPs: [
+      {
+        dpp: {
+          type: Schema.Types.ObjectId,
+          ref: "DPP",
+        },
+        isCompleted: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,

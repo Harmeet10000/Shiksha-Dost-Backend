@@ -8,13 +8,15 @@ import hpp from "hpp";
 import cors from "cors";
 import AppError from "./utils/appError.js";
 import globalErrorHandler from "./middlewares/errorMiddleware.js";
+import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import mentorRoutes from "./routes/mentorRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import materialRoutes from "./routes/materialRoutes.js";
-import cookieParser from "cookie-parser";
+import dppRoutes from "./routes/dppRoutes.js";
+import mentorshipRoutes from "./routes/mentorshipRoutes.js";
 
 const app = express();
 
@@ -79,6 +81,8 @@ app.use("/api/v1/mentor", mentorRoutes);
 app.use("/api/v1/blogs", blogRoutes);
 app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/material", materialRoutes);
+app.use("/api/v1/mentorship", mentorshipRoutes);
+app.use("/api/v1/dpp", dppRoutes);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

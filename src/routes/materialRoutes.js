@@ -7,10 +7,10 @@ import { getUploadS3URL } from "../helpers/s3.js";
 const router = express.Router();
 
 router.use(protect);
-router.use(restrictTo("admin"));
 
-router.post("/getUploadS3URL", getUploadS3URL);
 router.post("/addMaterial", addMaterial);
 router.get("/getMaterial", getMaterial);
 
-export default router;
+router.use(restrictTo("admin"));
+router.post("/getUploadS3URL", getUploadS3URL);
+export default router;vb
