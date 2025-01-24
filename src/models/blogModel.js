@@ -8,8 +8,9 @@ const blogSchema = new Schema(
       ref: "Mentor",
       required: true,
     },
-    img: {
+    cover_image: {
       type: String,
+      required: true,
     },
     title: {
       type: String,
