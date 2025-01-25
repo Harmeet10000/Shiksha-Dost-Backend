@@ -52,11 +52,9 @@ const userSchema = new Schema(
             },
             answer: {
               type: String,
-              required: [true, "A user answer must have an answer"],
             },
             isCorrect: {
               type: Boolean,
-              required: [true, "A user answer must have an isCorrect field"],
               default: false,
             },
           },
@@ -71,7 +69,6 @@ const userSchema = new Schema(
         },
         duration: {
           type: Number,
-          required: [true, "A DPP must have a duration"],
         },
         durationTaken: {
           type: Number,
@@ -79,20 +76,12 @@ const userSchema = new Schema(
         },
         dueDate: {
           type: Date,
-          required: [true, "A DPP must have a due date"],
           index: true,
         },
         isCompleted: {
           type: Boolean,
           default: false,
           index: true,
-        },
-        attempts: {
-          type: Number,
-          default: 0,
-        },
-        lastAttempt: {
-          type: Date,
         },
         questionsAttempted: {
           type: Number,

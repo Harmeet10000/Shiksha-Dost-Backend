@@ -18,7 +18,7 @@ router.post("/getUploadS3URL", getUploadS3URL);
 router.route("/getAllDPP").get(getAllDPP);
 router.route("/createDPP").post(restrictTo("admin"), createDPP);
 router.route("/getDPP/:id").get(getDPP);
-router.route("/updateDPP/:id").patch(restrictTo("admin"), updateDPP);
+router.route("/updateDPP/:id").put(restrictTo("admin"), updateDPP);
 router.route("/deleteDPP/:id").delete(restrictTo("admin"), deleteDPP);
 
 export default router;
