@@ -20,8 +20,8 @@ router.get("/getAllBlogs", getAllBlogs);
 router.post("/getUploadS3URL", getUploadS3URL);
 router.get("/:slug", increaseVisits, getBlog);
 
-router.use(restrictTo("mentor"));
 
+router.use(restrictTo("mentor"));
 router.post("/createBlog", createBlog);
 router.delete("/:id", deleteBlog);
 router.patch("/:id", updateBlog);

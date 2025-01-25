@@ -17,6 +17,7 @@ import commentRoutes from "./routes/commentRoutes.js";
 import materialRoutes from "./routes/materialRoutes.js";
 import dppRoutes from "./routes/dppRoutes.js";
 import mentorshipRoutes from "./routes/mentorshipRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 const app = express();
 
@@ -83,7 +84,7 @@ app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/material", materialRoutes);
 app.use("/api/v1/mentorship", mentorshipRoutes);
 app.use("/api/v1/dpp", dppRoutes);
-
+app.use("/api/v1/payment", paymentRoutes);
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
