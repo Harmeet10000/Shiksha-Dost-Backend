@@ -67,17 +67,11 @@ const userSchema = new Schema(
           type: Number,
           default: 0,
         },
-        duration: {
-          type: Number,
-        },
         durationTaken: {
           type: Number,
           default: 0,
         },
-        dueDate: {
-          type: Date,
-          index: true,
-        },
+       
         isCompleted: {
           type: Boolean,
           default: false,

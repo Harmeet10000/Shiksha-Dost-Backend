@@ -24,6 +24,9 @@ const dppSchema = new Schema(
       type: Date,
       required: [true, "A DPP must have a year"],
     },
+    duration: {
+      type: Number,
+    },
     problems: [
       {
         question: {
@@ -52,7 +55,10 @@ const dppSchema = new Schema(
       type: Number,
       required: [true, "A DPP must have total marks"],
     },
-  
+    dueDate: {
+      type: Date,
+      index: true,
+    },
   },
   { timestamps: true }
 );
