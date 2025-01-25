@@ -5,28 +5,33 @@ const mentorshipSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
-      ref: "User",  
+      ref: "User",
       required: true,
-      index: true, 
+      index: true,
     },
     mentor: {
       type: Schema.Types.ObjectId,
-      ref: "Mentor", 
+      ref: "Mentor",
       required: true,
-      index: true,  s
+      index: true,
+      s,
     },
     desc: {
       type: String, // Detailed description of the mentorship request
       required: true,
     },
     schedule: {
+      on: {
+        type: Date, // The date of the session
+        required: [true, "A schedule must have a date"],
+        index: true,
+      },
       start: {
-        type: Date,
+        type: String, // Start time in HH:mm format
         required: [true, "Start time is required for the schedule"],
-        index: true,  
       },
       end: {
-        type: Date,
+        type: String, // End time in HH:mm format
         required: [true, "End time is required for the schedule"],
       },
     },
@@ -35,41 +40,41 @@ const mentorshipSchema = new Schema(
     },
     isPaid: {
       type: Boolean,
-      default: false,  
+      default: false,
     },
     isCompleted: {
       type: Boolean,
-      default: false, 
-      index: true,  
+      default: false,
+      index: true,
     },
     feedback: {
       rating: {
         type: Number,
         min: 1,
-        max: 5,  
+        max: 5,
       },
       comments: {
-        type: String,  
+        type: String,
       },
     },
     meetingLink: {
-      type: String,  
+      type: String,
     },
     rescheduleCount: {
       type: Number,
-      default: 0,  
+      default: 0,
     },
     cancellationReason: {
-      type: String, 
+      type: String,
     },
     status: {
       type: String,
       enum: ["Pending", "Scheduled", "In Progress", "Completed", "Cancelled"],
-      default: "Pending", 
-      index: true, 
+      default: "Pending",
+      index: true,
     },
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 
 // Add compound indexes
