@@ -30,9 +30,9 @@ const userSchema = new Schema(
       minlength: 8,
       select: false,
     },
-    savedPosts: {
-      type: [String],
-      default: [],
+    savedBlogs: {
+      type: Schema.Types.ObjectId,
+      ref: "Blog",
     },
     solvedDPPs: [
       {
@@ -71,7 +71,7 @@ const userSchema = new Schema(
           type: Number,
           default: 0,
         },
-       
+
         isCompleted: {
           type: Boolean,
           default: false,
@@ -115,9 +115,16 @@ const userSchema = new Schema(
 );
 
 userSchema.index({ email: 1, isVerified: 1 });
+userSchema.index({ active: 1 });
 
 userSchema.pre(/^find/, function (next) {
-  this.find({ active: { $ne: false } });
+  this.find({
+    active: { $ne: false },
+    isVerified: { $ne: false },
+  }).populate({
+    path: "savedBlogs",
+    select: " author title slug desc category content cover_image visit likes shares ",
+  });
   next();
 });
 
@@ -173,4 +180,3 @@ userSchema.methods.createPasswordResetToken = function () {
 };
 
 export const User = mongoose.model("User", userSchema);
-

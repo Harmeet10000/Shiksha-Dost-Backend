@@ -9,33 +9,45 @@ import {
   updateOne,
 } from "./handlerFactory.js";
 
-export const getAllBlogs = getAll(Blog, {
-  path: "comments",
-  populate: [
-    {
-      path: "user",
-      select: "name profile_imageURL",
-    },
-    {
-      path: "replies.user",
-      select: "name profile_imageURL",
-    },
-  ],
-});
+export const getAllBlogs = getAll(Blog, [
+  {
+    path: "author",
+    select: "name profile_imageURL",
+  },
+  {
+    path: "comments",
+    populate: [
+      {
+        path: "user",
+        select: "name profile_imageURL",
+      },
+      {
+        path: "replies.user",
+        select: "name profile_imageURL",
+      },
+    ],
+  },
+]);
 
-export const getBlog = getOne(Blog, {
-  path: "comments",
-  populate: [
-    {
-      path: "user",
-      select: "name profile_imageURL",
-    },
-    {
-      path: "replies.user",
-      select: "name profile_imageURL",
-    },
-  ],
-});
+export const getBlog = getOne(Blog, [
+  {
+    path: "author",
+    select: "name profile_imageURL",
+  },
+  {
+    path: "comments",
+    populate: [
+      {
+        path: "user",
+        select: "name profile_imageURL",
+      },
+      {
+        path: "replies.user",
+        select: "name profile_imageURL",
+      },
+    ],
+  },
+]);
 
 export const createBlog = createOne(Blog);
 
@@ -114,7 +126,6 @@ export const disLikeBlog = catchAsync(async (req, res, next) => {
     },
   });
 });
-
 
 export const shareBlog = catchAsync(async (req, res, next) => {
   const { id } = req.params;

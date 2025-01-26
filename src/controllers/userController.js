@@ -76,6 +76,22 @@ export const submitDPP = catchAsync(async (req, res, next) => {
   });
 });
 
+export const saveBlog = catchAsync(async (req, res, next) => {
+  const { id: blogId } = req.params;
+  const userId = req.user.id;
+
+  await User.findByIdAndUpdate(
+    userId,
+    { $addToSet: { savedBlogs: blogId } },
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    status: "success",
+    message: "Blog saved successfully",
+  });
+});
+
 // export const getUserStats = catchAsync(async (req, res, next) => {
 //   const result = await User.aggregate([{ $count: "totalUsers" }]);
 //   res.status(200).json({ result });

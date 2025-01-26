@@ -6,6 +6,7 @@ import {
   deleteMentor,
   deleteStudent,
   getUserDPPs,
+  saveBlog,
   submitDPP,
 } from "../controllers/userController.js";
 import { checkout, paymentVerification } from "../helpers/razorpay.js";
@@ -17,6 +18,7 @@ router.post("/submitDPP", submitDPP);
 router.get("/getUserDPPs", getUserDPPs);
 router.post("/checkout", checkout);
 router.post("/paymentverification", paymentVerification);
+router.patch("/save/:id", saveBlog);
 
 router.use(restrictTo("admin"));
 router.patch("/blockMentor/:id", blockMentor);
