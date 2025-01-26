@@ -23,14 +23,14 @@ export const protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
     // console.log("JWT token found in Authorization header:", token);
   }
-
+  
   // 3) If no token is found in either, return an error
   if (!token) {
     return next(
       new AppError("You are not logged in! Please log in to get access.", 401)
     );
   }
-
+  
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   // 3) Check if user/mentor still exists

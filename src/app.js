@@ -16,7 +16,7 @@ import blogRoutes from "./routes/blogRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import materialRoutes from "./routes/materialRoutes.js";
 import dppRoutes from "./routes/dppRoutes.js";
-import mentorshipRoutes from "./routes/mentorshipRoutes.js";
+// import mentorshipRoutes from "./routes/mentorshipRoutes.js";
 
 const app = express();
 
@@ -81,7 +81,7 @@ app.use("/api/v1/mentor", mentorRoutes);
 app.use("/api/v1/blogs", blogRoutes);
 app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/material", materialRoutes);
-app.use("/api/v1/mentorship", mentorshipRoutes);
+// app.use("/api/v1/mentorship", mentorshipRoutes);
 app.use("/api/v1/dpp", dppRoutes);
 
 app.all("*", (req, res, next) => {

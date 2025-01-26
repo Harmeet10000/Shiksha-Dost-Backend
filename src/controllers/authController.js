@@ -72,7 +72,7 @@ export const signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
   });
-
+console.log(newUser);
   await createSendEmail(newUser, req, next);
   createSendToken(newUser, 201, res);
 });

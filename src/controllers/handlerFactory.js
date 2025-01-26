@@ -76,9 +76,10 @@ export const createOne = (Model) =>
       req.body.user = req.user._id;
       req.body.blog = req.params.blogId;
     }
-
+    console.log(req.body);
+    console.log(Model);
     const doc = await Model.create(req.body);
-
+    console.log(doc);
     res.status(201).json({
       status: "success",
       data: {
@@ -123,6 +124,7 @@ export const deleteOne = (Model) =>
 export const blockOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const { id } = req.params;
+    console.log(id);
     const doc = await Model.findByIdAndUpdate(id, { active: false });
 
     if (!doc) {

@@ -13,4 +13,4 @@ router.get("/getMaterial", getMaterial);
 
 router.use(restrictTo("admin"));
 router.post("/getUploadS3URL", getUploadS3URL);
-export default router;vb
+export default router;

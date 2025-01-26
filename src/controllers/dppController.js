@@ -1,6 +1,7 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { DPP } from "../models/dppModel.js";
+import { createOne, deleteOne, getAll, getOne, updateOne } from "./handlerFactory.js";
 
 
 export const getAllDPP = getAll(DPP);

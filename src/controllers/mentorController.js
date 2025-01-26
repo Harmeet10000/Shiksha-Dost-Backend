@@ -4,8 +4,6 @@ import { Mentor } from "../models/mentorModel.js";
 import { getAll, updateOne } from "./handlerFactory.js";
 import mongoose from "mongoose";
 
-
-
 export const updateMentor = updateOne(Mentor);
 
 export const getAllMentor = getAll(Mentor);
