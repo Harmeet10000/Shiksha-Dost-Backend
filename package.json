@@ -6,12 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "dev:prod": "nodemon dist/index.js",
+    "dev:prod": "nodemon dist/index.cjs",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run clean && npm run compile",
-    "clean": "rm -rf dist",
-    "compile": "babel src --out-dir dist --ignore 'node_modules/**' --extensions '.js,.mjs,.ts'"
+    "build": "npx webpack --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -49,15 +47,22 @@
     "resend": "^4.1.1",
     "slugify": "^1.6.6",
     "validator": "^13.12.0",
+    "webpack": "^5.97.1",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.26.4",
-    "@babel/core": "^7.26.0",
+    "@babel/core": "^7.26.7",
     "@babel/node": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/plugin-transform-runtime": "^7.25.9",
+    "@babel/preset-env": "^7.26.7",
+    "@babel/runtime": "^7.26.7",
     "babel-loader": "^9.2.1",
     "dotenv-webpack": "^8.1.0",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-node-externals": "^3.0.0"
   }
 }
