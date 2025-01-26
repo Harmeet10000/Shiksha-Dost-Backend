@@ -1,18 +1,16 @@
 import express from "express";
 import {
-  getBlogComments,
   addComment,
   deleteComment,
+  replyComment,
 } from "../controllers/commentController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-
 router.use(protect);
-router.route("/:blogId").get(getBlogComments)
-router.route("/:blogId").post(addComment);
-
+router.route("/:blogId").post(restrictTo("student"), addComment);
+router.route("/reply/:commentId").post(restrictTo("student"), replyComment);
 
 router.use(restrictTo("mentor", "student"));
 router.route("/:id").delete(deleteComment);

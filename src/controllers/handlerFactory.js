@@ -43,13 +43,14 @@ export const getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     let doc;
 
-    if (Model.modelName === "Blog") {
-      doc = await Model.findOne({ slug: req.params.slug });
-    } else {
-      let query = Model.findById(req.params.id);
-      if (popOptions) query = query.populate(popOptions);
-      doc = await query;
-    }
+  if (Model.modelName === "Blog") {
+    doc = await Model.findOne({ slug: req.params.slug });
+    if (popOptions) doc = await doc.populate(popOptions);
+  } else {
+    let query = Model.findById(req.params.id);
+    if (popOptions) query = query.populate(popOptions);
+    doc = await query;
+  }
 
     if (!doc) {
       return next(new AppError("No document found with that ID or slug", 404));
@@ -66,15 +67,12 @@ export const getOne = (Model, popOptions) =>
 export const createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     if (Model.modelName === "Blog") {
-      let slug = req.body.title.replace(/ /g, "-").toLowerCase();
-      slug = `${slug}-${Date.now()}`;
-      req.body.slug = slug;
       req.body.author = req.user._id;
     }
 
     if (Model.modelName === "Comment") {
       req.body.user = req.user._id;
-      req.body.blog = req.params.blogId;
+      req.body.blogId = req.params.blogId;
     }
 
     const doc = await Model.create(req.body);

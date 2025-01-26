@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
 const { Schema } = mongoose;
 
 const blogSchema = new Schema(
@@ -18,7 +19,6 @@ const blogSchema = new Schema(
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
     },
     desc: {
@@ -40,9 +40,16 @@ const blogSchema = new Schema(
       type: Number,
       default: 0,
     },
-    
+    likes: {
+      type: Number,
+      default: 0,
+    },
+    shares: {
+      type: Number,
+      default: 0,
+    },
   },
-  { timestamps: true }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
 );
 
 // Compound index to optimize queries for featured blogs in a specific category
@@ -61,5 +68,26 @@ blogSchema.index({ visit: -1 });
 blogSchema.index({ category: 1 });
 // TTL index on `timestamps` to automatically delete outdated or temporary blogs (optional)
 blogSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3600 * 24 * 30 }); // Example: 30 days
+
+// DOCUMENT MIDDLEWARE: runs before .save() and .create()
+blogSchema.pre("save", function (next) {
+  if (this.isModified("title")) {
+    this.slug = slugify(this.title, { lower: true }) + `-${Date.now()}`;
+  }
+  next();
+});
+
+// Virtual populate for comments
+blogSchema.virtual("comments", {
+  ref: "Comment", // Model to populate
+  localField: "_id", // Field in Blog
+  foreignField: "blogId", // Field in Comment
+  justOne: false,
+});
+
+blogSchema.post(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
+  next();
+});
 
 export const Blog = mongoose.model("Blog", blogSchema);
