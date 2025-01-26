@@ -62,4 +62,16 @@ blogSchema.index({ category: 1 });
 // TTL index on `timestamps` to automatically delete outdated or temporary blogs (optional)
 blogSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3600 * 24 * 30 }); // Example: 30 days
 
+// Virtual populate for comments
+blogSchema.virtual("comments", {
+  ref: "Comment", // The model to use
+  localField: "_id", // The field in the Blog model
+  foreignField: "blog", // The field in the Comment model
+});
+
+// Ensure virtual fields are included when converting to JSON or Object
+blogSchema.set("toObject", { virtuals: true });
+blogSchema.set("toJSON", { virtuals: true });
+
+
 export const Blog = mongoose.model("Blog", blogSchema);

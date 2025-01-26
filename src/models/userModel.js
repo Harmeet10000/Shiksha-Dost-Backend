@@ -40,9 +40,56 @@ const userSchema = new Schema(
           type: Schema.Types.ObjectId,
           ref: "DPP",
         },
+        obtainedMarks: {
+          type: Number,
+          default: 0,
+        },
+        userAnswers: [
+          {
+            question: {
+              type: Schema.Types.ObjectId,
+              required: true,
+            },
+            answer: {
+              type: String,
+            },
+            isCorrect: {
+              type: Boolean,
+              default: false,
+            },
+          },
+        ],
+        questionsCorrect: {
+          type: Number,
+          default: 0,
+        },
+        questionsIncorrect: {
+          type: Number,
+          default: 0,
+        },
+        durationTaken: {
+          type: Number,
+          default: 0,
+        },
+       
         isCompleted: {
           type: Boolean,
           default: false,
+          index: true,
+        },
+        questionsAttempted: {
+          type: Number,
+          default: 0,
+        },
+        questionsUnattempted: {
+          type: Number,
+          default: 0,
+        },
+        startAt: {
+          type: Date,
+        },
+        submittedAt: {
+          type: Date,
         },
       },
     ],

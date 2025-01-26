@@ -5,13 +5,20 @@ import {
   blockStudent,
   deleteMentor,
   deleteStudent,
+  getUserDPPs,
+  submitDPP,
 } from "../controllers/userController.js";
+import { checkout, paymentVerification } from "../helpers/razorpay.js";
 
 const router = express.Router();
 
 router.use(protect);
-router.use(restrictTo("admin"));
+router.post("/submitDPP", submitDPP);
+router.get("/getUserDPPs", getUserDPPs);
+router.post("/checkout", checkout);
+router.post("/paymentverification", paymentVerification);
 
+router.use(restrictTo("admin"));
 router.patch("/blockMentor/:id", blockMentor);
 router.delete("/deleteMentor/:id", deleteMentor);
 router.patch("/blockStudent/:id", blockStudent);

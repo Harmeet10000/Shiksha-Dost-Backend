@@ -11,12 +11,12 @@ import { getUploadS3URL } from "../helpers/s3.js";
 
 const router = express.Router();
 
-router.use(protect);
 
+router.use(protect);
 router.get("/getAllMentor", getAllMentor);
 
-router.use(restrictTo("mentor"));
 
+router.use(restrictTo("mentor"));
 router.patch("/:id", updateMentor);
 router.patch("/unavailability/:id", unavailabilityUpdate);
 router.get("/unavailability/:id", getUnavailability);

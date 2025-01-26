@@ -9,12 +9,33 @@ import {
   updateOne,
 } from "./handlerFactory.js";
 
-export const getAllBlogs = getAll(Blog, {
-  path: "author", // Populate the author field
-  select: "name profile_imageURL", // Select only name and profile_imageURL
-});
+export const getAllBlogs = getAll(Blog, [
+  {
+    path: "author", // Populate the author field
+    select: "name profile_imageURL", // Select only name and profile_imageURL
+  },
+  {
+    path: "comments", // Populate the comments field
+    populate: {
+      path: "user", // Nested populate for user in comments
+      select: "name profile_imageURL", // Select name and profile_imageURL
+    },
+  },
+]);
 
-export const getBlog = getOne(Blog);
+export const getBlog = getOne(Blog, [
+  {
+    path: "author", // Populate the author field
+    select: "name profile_imageURL", // Select only name and profile_imageURL
+  },
+  {
+    path: "comments", // Populate the comments field
+    populate: {
+      path: "user", // Nested populate for user in comments
+      select: "name profile_imageURL", // Select name and profile_imageURL
+    },
+  },
+]);
 
 export const createBlog = createOne(Blog);
 

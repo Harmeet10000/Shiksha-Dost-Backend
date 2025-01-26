@@ -76,9 +76,12 @@ export const createOne = (Model) =>
       req.body.user = req.user._id;
       req.body.blog = req.params.blogId;
     }
-    console.log(req.body);
-    console.log(Model);
-    const doc = await Model.create(req.body);
+   
+    let doc = await Model.create(req.body);
+
+    if (Model.modelName === "Comment") {
+      doc = await doc.populate("user", "name profile_imageURL");
+    }
     console.log(doc);
     res.status(201).json({
       status: "success",

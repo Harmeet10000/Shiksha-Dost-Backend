@@ -20,12 +20,11 @@ router.post("/loginMentor", loginMentor);
 router.post("/signupMentor", signupMentor);
 router.get("/verify-email/:token", verifyEmail);
 
-router.use(protect);
 
+router.use(protect);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 router.patch("/updateMyPassword", updatePassword);
-// router.patch("/updateMe", updateMe);
 
 router.use(restrictTo("admin"));
 
