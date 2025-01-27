@@ -143,3 +143,31 @@ export const shareBlog = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+export const saveBlog = catchAsync(async (req, res, next) => {
+  const { id: blogId } = req.params;
+  const userId = req.user.id;
+
+  const user = await User.findById(userId);
+
+  const alreadySaved = user.savedPosts.some(
+    (post) => post.blogId.toString() === blogId
+  );
+
+  if (alreadySaved) {
+    user.savedPosts = user.savedPosts.filter(
+      (post) => post.blogId.toString() !== blogId
+    );
+  } else {
+    user.savedPosts.push({ blogId });
+  }
+
+  await user.save();
+
+  res.status(200).json({
+    status: "success",
+    message: alreadySaved
+      ? "Blog removed from saved posts"
+      : "Blog saved successfully",
+  });
+});

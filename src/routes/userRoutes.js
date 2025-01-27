@@ -6,10 +6,11 @@ import {
   deleteMentor,
   deleteStudent,
   getUserDPPs,
-  saveBlog,
   submitDPP,
+  updateStudentProfile,
 } from "../controllers/userController.js";
 import { checkout, paymentVerification } from "../helpers/razorpay.js";
+import { getUploadS3URL } from "../helpers/s3.js";
 
 const router = express.Router();
 
@@ -18,7 +19,8 @@ router.post("/submitDPP", submitDPP);
 router.get("/getUserDPPs", getUserDPPs);
 router.post("/checkout", checkout);
 router.post("/paymentverification", paymentVerification);
-router.patch("/save/:id", saveBlog);
+router.patch("/updateProfileImage/:id", updateStudentProfile);
+router.get("getUploadS3URL", getUploadS3URL);
 
 router.use(restrictTo("admin"));
 router.patch("/blockMentor/:id", blockMentor);

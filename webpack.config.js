@@ -8,7 +8,7 @@ export default {
   mode: "production", // Use production mode for optimizations
   externals: [webpackNodeExternals()], // Exclude node_modules from the bundle
   output: {
-    filename: "index.js",
+    filename: "index.cjs",
     path: path.resolve(process.cwd(), "dist"),
   },
   module: {

@@ -11,6 +11,7 @@ import {
   likeBlog,
   disLikeBlog,
   shareBlog,
+  saveBlog,
 } from "../controllers/blogController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 import { increaseVisits } from "../middlewares/increaseVisits.js";
@@ -26,7 +27,7 @@ router.get("/:slug", increaseVisits, getBlog);
 router.post("/like/:id", likeBlog);
 router.post("/dislike/:id", disLikeBlog);
 router.post("/share/:id", shareBlog);
-
+router.patch("/save-blog/:blogId", saveBlog);
 
 router.use(restrictTo("mentor"));
 router.post("/createBlog", createBlog);

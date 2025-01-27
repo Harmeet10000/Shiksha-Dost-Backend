@@ -12,6 +12,7 @@ export const protect = catchAsync(async (req, res, next) => {
   if (req.cookies.jwt) {
     token = req.cookies.jwt;
     // console.log("JWT token found in cookies:", token);
+    
   }
 
   // 2) If token is not found in cookies, check the Authorization header
