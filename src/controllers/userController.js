@@ -1,7 +1,7 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { User } from "../models/userModel.js";
-import { blockOne, deleteOne, getAll } from "./handlerFactory.js";
+import { blockOne, deleteOne, getAll, updateOne } from "./handlerFactory.js";
 import { Mentor } from "../models/mentorModel.js";
 import { DPP } from "../models/dppModel.js";
 
@@ -85,3 +85,5 @@ export const submitDPP = catchAsync(async (req, res, next) => {
 
 // // Do NOT update passwords with this!
 // export const updateUser = updateOne(User);
+
+export const updateStudentProfile = updateOne(User);

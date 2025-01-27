@@ -7,6 +7,11 @@ import {
   deleteBlog,
   featureBlog,
   getMentorBlogs,
+  unfeatureBlog,
+  likeBlog,
+  disLikeBlog,
+  shareBlog,
+  saveBlog,
 } from "../controllers/blogController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 import { increaseVisits } from "../middlewares/increaseVisits.js";
@@ -19,12 +24,17 @@ router.use(protect);
 router.get("/getAllBlogs", getAllBlogs);
 router.post("/getUploadS3URL", getUploadS3URL);
 router.get("/:slug", increaseVisits, getBlog);
+router.post("/like/:id", likeBlog);
+router.post("/dislike/:id", disLikeBlog);
+router.post("/share/:id", shareBlog);
+router.patch("/save-blog/:blogId",saveBlog);
 
 router.use(restrictTo("mentor"));
 router.post("/createBlog", createBlog);
 router.delete("/:id", deleteBlog);
 router.patch("/:id", updateBlog);
-router.patch("/feature/:id",  featureBlog);
+router.patch("/feature/:id", featureBlog);
+router.patch("/unfeature/:id", unfeatureBlog);
 router.get("/getMentorBlogs/:id", getMentorBlogs);
 
 export default router;

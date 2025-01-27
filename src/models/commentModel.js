@@ -3,20 +3,30 @@ const { Schema } = mongoose;
 
 const commentSchema = new Schema(
   {
+    blogId: {
+      type: Schema.Types.ObjectId,
+      ref: "Blog",
+      required: true,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
-    },
-    blog: {
-      type: Schema.Types.ObjectId,
-      ref: "Blog",
       required: true,
     },
     desc: {
       type: String,
       required: true,
     },
+    replies: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User", // Also reference User for replies
+        },
+        desc: String,
+        createdAt: Date,
+      },
+    ],
   },
   { timestamps: true }
 );

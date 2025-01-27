@@ -2,6 +2,7 @@ import crypto from "crypto";
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import { type } from "os";
 
 const userSchema = new Schema(
   {
@@ -30,10 +31,14 @@ const userSchema = new Schema(
       minlength: 8,
       select: false,
     },
-    savedPosts: {
-      type: [String],
-      default: [],
-    },
+    savedPosts: [
+      {
+        blogId: {
+          type: Schema.Types.ObjectId,
+          ref: "Blog",
+        },
+      },
+    ],
     solvedDPPs: [
       {
         dpp: {
@@ -71,7 +76,7 @@ const userSchema = new Schema(
           type: Number,
           default: 0,
         },
-       
+
         isCompleted: {
           type: Boolean,
           default: false,
@@ -173,4 +178,3 @@ userSchema.methods.createPasswordResetToken = function () {
 };
 
 export const User = mongoose.model("User", userSchema);
-
