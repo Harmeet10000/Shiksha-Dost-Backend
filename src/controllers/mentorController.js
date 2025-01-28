@@ -1,7 +1,7 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import { Mentor } from "../models/mentorModel.js";
-import { getAll, updateOne } from "./handlerFactory.js";
+import { getAll, getOne, updateOne } from "./handlerFactory.js";
 import mongoose from "mongoose";
 
 
@@ -9,6 +9,8 @@ import mongoose from "mongoose";
 export const updateMentor = updateOne(Mentor);
 
 export const getAllMentor = getAll(Mentor);
+
+export const getMentorDetails = getOne(Mentor)
 
 export const getUnavailability = catchAsync(async (req, res, next) => {
   const { id } = req.params;

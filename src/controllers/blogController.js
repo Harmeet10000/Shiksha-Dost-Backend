@@ -9,6 +9,9 @@ import {
   updateOne,
 } from "./handlerFactory.js";
 
+import { User } from "../models/userModel.js";
+import Like from "../models/likeModel.js";
+
 export const getAllBlogs = getAll(Blog, [
   {
     path: "author",
@@ -95,19 +98,28 @@ export const unfeatureBlog = catchAsync(async (req, res, next) => {
 
 export const likeBlog = catchAsync(async (req, res, next) => {
   const { id } = req.params;
+  const userId = req.user._id;
 
-  const blog = await Blog.findByIdAndUpdate(
-    id,
-    { $inc: { likes: 1 } },
-    { new: true, runValidators: true }
-  );
+  // Check if the user has already liked the blog
+  const existingLike = await Like.findOne({ blog: id, user: userId });
 
-  res.status(200).json({
-    status: "success",
-    data: {
-      blog,
-    },
-  });
+  if (existingLike) {
+    // Unlike the blog by deleting the like document
+    await Like.findByIdAndDelete(existingLike._id);
+
+    // Update user's like count in the user collection
+    await Blog.findByIdAndUpdate(id, { $inc: { likes: -1 } });
+
+    return res.status(200).json({action:"dislike", message: "Blog unliked" });
+  } else {
+    // Like the blog by creating a new like document
+    await Like.create({ user: userId, blog: id });
+
+    // Update user's like count in the user collection
+    await Blog.findByIdAndUpdate(id, { $inc: { likes: 1 } });
+
+    return res.status(200).json({action:"like" ,message: "Blog liked" });
+  }
 });
 
 export const disLikeBlog = catchAsync(async (req, res, next) => {
@@ -145,29 +157,44 @@ export const shareBlog = catchAsync(async (req, res, next) => {
 });
 
 export const saveBlog = catchAsync(async (req, res, next) => {
-  const { id: blogId } = req.params;
+  const { blogId } = req.params;
   const userId = req.user.id;
+
+  const blogExists = await Blog.findById(blogId);
+  if (!blogExists) {
+    return res.status(404).json({ message: "Blog not found" });
+  }
 
   const user = await User.findById(userId);
 
-  const alreadySaved = user.savedPosts.some(
+  const alreadySaved = user.savedBlogs.some(
     (post) => post.blogId.toString() === blogId
   );
 
   if (alreadySaved) {
-    user.savedPosts = user.savedPosts.filter(
+    user.savedBlogs = user.savedBlogs.filter(
       (post) => post.blogId.toString() !== blogId
     );
   } else {
-    user.savedPosts.push({ blogId });
+    user.savedBlogs.push({ blogId });
   }
 
   await user.save();
 
+  const updatedUser = await User.findById(req.user._id).populate({
+    path: "savedBlogs.blogId",
+    select: "slug title cover_image desc author createdAt",
+    populate: {
+      path: "author",
+      select: "name profile_imageURL", // Populate author with name and email or any other fields
+    },
+  });
+
   res.status(200).json({
-    status: "success",
+    action: alreadySaved ? "remove" : "add",
     message: alreadySaved
       ? "Blog removed from saved posts"
-      : "Blog saved successfully",
+      : "Blog added to saved posts",
+    savedBlogs: updatedUser.savedBlogs,
   });
 });

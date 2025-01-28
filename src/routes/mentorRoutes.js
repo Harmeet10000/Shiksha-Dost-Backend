@@ -2,6 +2,7 @@ import express from "express";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 import {
   getAllMentor,
+  getMentorDetails,
   getUnavailability,
   removeUnavailability,
   unavailabilityUpdate,
@@ -14,7 +15,7 @@ const router = express.Router();
 
 router.use(protect);
 router.get("/getAllMentor", getAllMentor);
-
+router.get("/getMentorDetails/:id",getMentorDetails)
 
 router.use(restrictTo("mentor"));
 router.patch("/:id", updateMentor);

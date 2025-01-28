@@ -14,13 +14,13 @@ import { getUploadS3URL } from "../helpers/s3.js";
 
 const router = express.Router();
 
-router.use(protect);
+// router.use(protect);
 router.post("/submitDPP", submitDPP);
 router.get("/getUserDPPs", getUserDPPs);
 router.post("/checkout", checkout);
 router.post("/paymentverification", paymentVerification);
 router.patch("/updateProfileImage/:id", updateStudentProfile);
-router.get("getUploadS3URL", getUploadS3URL);
+router.post("/getUploadS3URL", getUploadS3URL);
 
 router.use(restrictTo("admin"));
 router.patch("/blockMentor/:id", blockMentor);

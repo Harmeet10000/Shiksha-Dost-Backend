@@ -102,17 +102,22 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
+  console.log(hashedToken);
+
+  const users = await User.find({});
+  console.log(users);
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
-    emailVerificationExpires: { $gt: Date.now() },
+    // emailVerificationExpires: { $gte: Date.now() },
   });
-
+  console.log(user);
   if (!user) {
     return res.status(400).json({
       status: "error",
       message: "Token is invalid or has expired",
     });
   }
+  console.log("h3");
   user.isVerified = true;
   user.emailVerificationToken = undefined;
   user.emailVerificationExpires = undefined;
@@ -130,7 +135,17 @@ export const login = catchAsync(async (req, res, next) => {
   if (!email || !password)
     return next(new AppError("Please provide email and password!", 400));
 
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email })
+    .select("+password")
+    .populate({
+      path: "savedBlogs.blogId",
+      select: "slug title cover_image desc author createdAt",
+      populate: {
+        path: "author",
+        select: "name profile_imageURL", // Populate author with name and email or any other fields
+      },
+    });
+
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError("Incorrect email or password", 401));
 
