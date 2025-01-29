@@ -8,6 +8,42 @@ export const updateMentor = updateOne(Mentor);
 
 export const getAllMentor = getAll(Mentor);
 
+export const getUnavailability = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  let objectId;
+  try {
+    objectId = new mongoose.Types.ObjectId(id); // Convert to ObjectId
+  } catch (error) {
+    return next(new AppError("Invalid Mentor ID", 400)); // Handle invalid ObjectId
+  }
+
+  const mentor = await Mentor.aggregate([
+    {
+      $match: { _id: objectId },
+    },
+    {
+      $project: {
+        _id: 0,
+        unavailability: 1,
+      },
+    },
+  ]);
+
+  if (!mentor || mentor.length === 0) {
+    return next(new AppError("No mentor found with that ID", 404));
+  }
+
+  const unavailability = mentor[0].unavailability;
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      unavailability,
+    },
+  });
+});
+
 export const checkUnavailability = catchAsync(async (req, res, next) => {
   const { id } = req.params; // Mentor ID
   const { date, slot } = req.query; // Query parameters
