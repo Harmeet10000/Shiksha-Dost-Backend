@@ -16,6 +16,8 @@ export const createMentorship = catchAsync(async (req, res, next) => {
   // Define durations
   const timeDurations = {
     "10 min": 10,
+    "15 min": 15,
+    "20 min": 20,
     "30 min": 30,
     "1 hr": 60,
   };

@@ -4,13 +4,14 @@ import { checkout, fetchReceipt, paymentVerification } from "../helpers/razorpay
 
 const router = express.Router();
 
-// router.use(protect);
-router.post("/checkout", checkout);
 router.post("/paymentverification", paymentVerification);
-router.get("/receipt/:payment_id", fetchReceipt);
 
+router.use(protect);
 router.get("/getkey", (req, res) =>
   res.status(200).json({ key: process.env.RAZORPAY_KEY_ID })
 );
+router.post("/checkout", checkout);
+router.get("/receipt/:payment_id", fetchReceipt);
+
 
 export default router;

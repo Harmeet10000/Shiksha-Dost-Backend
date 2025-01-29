@@ -9,7 +9,6 @@ import {
   getMentorBlogs,
   unfeatureBlog,
   likeBlog,
-  disLikeBlog,
   shareBlog,
   saveBlog,
 } from "../controllers/blogController.js";
@@ -25,7 +24,6 @@ router.get("/getAllBlogs", getAllBlogs);
 router.post("/getUploadS3URL", getUploadS3URL);
 router.get("/:slug", increaseVisits, getBlog);
 router.post("/like/:id", likeBlog);
-router.post("/dislike/:id", disLikeBlog);
 router.post("/share/:id", shareBlog);
 router.patch("/save-blog/:blogId", saveBlog);
 

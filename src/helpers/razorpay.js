@@ -54,7 +54,7 @@ export const paymentVerification = catchAsync(async (req, res, next) => {
       },
       { new: true } // Return the updated document
     );
-
+    console.log(mentorship);
     // Send response
     res.status(200).json({
       success: true,

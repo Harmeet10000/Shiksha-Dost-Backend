@@ -30,10 +30,14 @@ const userSchema = new Schema(
       minlength: 8,
       select: false,
     },
-    savedBlogs: {
-      type: Schema.Types.ObjectId,
-      ref: "Blog",
-    },
+    savedBlogs: [
+      {
+        blogId: {
+          type: Schema.Types.ObjectId,
+          ref: "Blog",
+        },
+      },
+    ],
     solvedDPPs: [
       {
         dpp: {
@@ -122,11 +126,13 @@ userSchema.pre(/^find/, function (next) {
     active: { $ne: false },
     isVerified: { $ne: false },
   }).populate({
-    path: "savedBlogs",
-    select: " author title slug desc category content cover_image visit likes shares ",
+    path: "savedBlogs.blogId", 
+    select:
+      "author title slug desc category content cover_image visit likes shares",
   });
   next();
 });
+
 
 userSchema.pre("save", async function (next) {
   try {
