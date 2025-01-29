@@ -14,15 +14,24 @@ const sesClient = new SESClient({
 });
 
 export const Resendmail = catchAsync(async (info) => {
-const { name, to, verificationURL, role, password } = info;
-const resend = new Resend("re_dPQCac4W_8N4GP3V3eGJE4trqEZsLnt3Q");
+  const {
+    name,
+    to,
+    verificationURL,
+    role,
+    password,
+    use,
+    schedule,
+    meetingLink,
+  } = info;
+  const resend = new Resend("re_dPQCac4W_8N4GP3V3eGJE4trqEZsLnt3Q");
 
-let htmlContent = "";
-let subject = "";
+  let htmlContent = "";
+  let subject = "";
 
-if (role === "mentor") {
-  // Mentor case
-  htmlContent = `<!DOCTYPE html>
+  if (role === "mentor" && use === "signup") {
+    // Mentor case
+    htmlContent = `<!DOCTYPE html>
 <html>
 <head>
     <style>
@@ -69,10 +78,86 @@ if (role === "mentor") {
     </div>
 </body>
 </html>`;
-  subject = "Welcome to the ShikshaDost Platform!";
-} else if (role === "student") {
-  // Student case
-  htmlContent = `
+    subject = "Welcome to the ShikshaDost Platform!";
+  } else if (role === "mentor" && use === "meeting") {
+    // Mentor meeting details email template
+    subject = "Meeting Details from ShikshaDost";
+    htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .header { color: #2c5282; }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2c5282;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer { margin-top: 20px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1 class="header">Meeting Details</h1>
+        <p>Hello ${name},</p>
+        <p>Your meeting with your student is scheduled on ${new Date(
+          schedule.on
+        ).toLocaleDateString()} at ${schedule.start} to ${schedule.end}.</p>
+        <p><strong>Meeting Link:</strong> <a href="${meetingLink}" target="_blank">${meetingLink}</a></p>
+        <p>We look forward to your session!</p>
+        <div class="footer">
+          <p>Best regards,<br>Team ShikshaDost</p>
+        </div>
+      </div>
+    </body>
+    </html>`;
+  } else if (role === "user" && use === "meeting") {
+    // User meeting details email template
+    subject = "Meeting Details from ShikshaDost";
+    htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .header { color: #2c5282; }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2c5282;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer { margin-top: 20px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1 class="header">Meeting Details</h1>
+        <p>Hello ${name},</p>
+        <p>Your meeting with your mentor is scheduled on ${new Date(
+          schedule.on
+        ).toLocaleDateString()} at ${schedule.start} to ${schedule.end}.</p>
+        <p><strong>Meeting Link:</strong> <a href="${meetingLink}" target="_blank">${meetingLink}</a></p>
+        <p>We look forward to your session!</p>
+        <div class="footer">
+          <p>Best regards,<br>Team ShikshaDost</p>
+        </div>
+      </div>
+    </body>
+    </html>`;
+  } else if (role === "user" && use === "signup") {
+    // Student case
+    htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -115,8 +200,8 @@ if (role === "mentor") {
     </div>
 </body>
 </html>`;
-  subject = "Verify Your Email Address";
-}
+    subject = "Verify Your Email Address";
+  }
 
   try {
     const ans = await resend.emails.send({

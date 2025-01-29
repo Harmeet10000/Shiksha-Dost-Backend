@@ -2,7 +2,7 @@ import express from "express";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 import {
   getAllMentor,
-  getUnavailability,
+  checkUnavailability,
   removeUnavailability,
   unavailabilityUpdate,
   updateMentor,
@@ -19,7 +19,7 @@ router.get("/getAllMentor", getAllMentor);
 router.use(restrictTo("mentor"));
 router.patch("/:id", updateMentor);
 router.patch("/unavailability/:id", unavailabilityUpdate);
-router.get("/unavailability/:id", getUnavailability);
+router.get("/unavailability/:id", checkUnavailability);
 router.patch("/removeUnavailability/:id", removeUnavailability);
 router.post("/getUploadS3URL", getUploadS3URL);
 

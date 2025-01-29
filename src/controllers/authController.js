@@ -51,6 +51,7 @@ const createSendEmail = async (user, req, next) => {
       to: user.email,
       verificationURL: verificationURL,
       role: user.role,
+      use: "signup",
     };
 
     await Resendmail(info);
@@ -91,6 +92,7 @@ export const signupMentor = catchAsync(async (req, res, next) => {
     to: newUser.email,
     verificationURL: "",
     role: newUser.role,
+    use: "signup",
   };
   await Resendmail(info);
   createSendToken(newUser, 201, res);

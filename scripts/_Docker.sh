@@ -1,4 +1,3 @@
-# Description: This script is used to build and run the Docker container for the Shiksha Dost Backend.
 
 # The Docker container is built using the Dockerfile in the project directory.
 docker build -t shiksha-dost-backend .

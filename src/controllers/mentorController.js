@@ -4,44 +4,130 @@ import { Mentor } from "../models/mentorModel.js";
 import { getAll, updateOne } from "./handlerFactory.js";
 import mongoose from "mongoose";
 
-
-
 export const updateMentor = updateOne(Mentor);
 
 export const getAllMentor = getAll(Mentor);
 
-export const getUnavailability = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
+export const checkUnavailability = catchAsync(async (req, res, next) => {
+  const { id } = req.params; // Mentor ID
+  const { date, slot } = req.query; // Query parameters
+  const userId = req.user._id; // User ID from the authenticated user
 
-  let objectId;
+  // Validate the mentor ID
+  let mentorId;
   try {
-    objectId = new mongoose.Types.ObjectId(id); // Convert to ObjectId
+    mentorId = new mongoose.Types.ObjectId(id);
   } catch (error) {
-    return next(new AppError("Invalid Mentor ID", 400)); // Handle invalid ObjectId
+    return next(new AppError("Invalid Mentor ID", 400));
   }
 
-  const mentor = await Mentor.aggregate([
+  // Convert the date to a Date object
+  const queryDate = new Date(date);
+
+  // Run aggregation pipeline to check slot conflicts
+  const mentorships = await Mentorship.aggregate([
     {
-      $match: { _id: objectId },
+      $match: {
+        mentor: mentorId, // Match the mentor ID
+        user: userId, // Match the user ID
+        isCompleted: false, // Ensure the session is not completed
+        "schedule.on": queryDate, // Match the schedule date
+      },
+    },
+    {
+      $addFields: {
+        slotConflict: {
+          $filter: {
+            input: ["$schedule"], // Access the `schedule` array
+            as: "schedule",
+            cond: {
+              $and: [
+                { $gte: [slot, "$$schedule.start"] }, // Slot is >= schedule start
+                { $lte: [slot, "$$schedule.end"] }, // Slot is <= schedule end
+              ],
+            },
+          },
+        },
+      },
     },
     {
       $project: {
-        _id: 0,
-        unavailability: 1,
+        slotConflict: 1,
+        mentor: 1,
+        schedule: 1,
+      },
+    },
+    {
+      $match: {
+        "slotConflict.0": { $exists: true }, // Ensure at least one conflicting slot exists
       },
     },
   ]);
 
-  if (!mentor || mentor.length === 0) {
+  // Check if any conflicts exist
+  if (mentorships.length > 0) {
+    return res.status(200).json({
+      status: "success",
+      data: {
+        isUnavailable: true,
+        message: "Mentor is already scheduled at this time slot.",
+      },
+    });
+  }
+
+  // Check unavailability in mentor's schedule
+  const mentor = await Mentor.findById(mentorId).select("unavailability");
+
+  if (!mentor) {
     return next(new AppError("No mentor found with that ID", 404));
   }
 
-  const unavailability = mentor[0].unavailability;
+  const unavailability = mentor.unavailability;
 
+  // Check for conflicts in mentor's unavailability
+  const unavailabilityEntry = unavailability.find(
+    (entry) =>
+      new Date(entry.date).toISOString().split("T")[0] ===
+      queryDate.toISOString().split("T")[0]
+  );
+
+  if (!unavailabilityEntry) {
+    return res.status(200).json({
+      status: "success",
+      data: {
+        isUnavailable: false,
+        message: "Mentor is available on this date.",
+      },
+    });
+  }
+
+  // Convert the slot to a time string in 24-hour format for easier comparison
+  const slotTime = new Date(`1970-01-01T${slot}`).toLocaleTimeString("en-US", {
+    hour12: false,
+  });
+
+  // Check if the slot lies between any of the start and end times in the slots array
+  const isUnavailable = unavailabilityEntry.slots.some((slotEntry) => {
+    const startTime = new Date(
+      `1970-01-01T${slotEntry.start}`
+    ).toLocaleTimeString("en-US", { hour12: false });
+    const endTime = new Date(`1970-01-01T${slotEntry.end}`).toLocaleTimeString(
+      "en-US",
+      { hour12: false }
+    );
+
+    return slotTime >= startTime && slotTime <= endTime;
+  });
+
+  // Final response
   res.status(200).json({
     status: "success",
     data: {
-      unavailability,
+      isUnavailable,
+      message: isUnavailable
+        ? "Mentor is unavailable at this slot."
+        : "Mentor is available at this slot.",
+      unavailableSlots: isUnavailable ? unavailabilityEntry.slots : [],
     },
   });
 });

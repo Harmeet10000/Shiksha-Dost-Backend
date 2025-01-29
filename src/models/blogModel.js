@@ -85,9 +85,9 @@ blogSchema.virtual("comments", {
   justOne: false,
 });
 
-blogSchema.post(/^find/, function (docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
-  next();
-});
+// blogSchema.post(/^find/, function (docs, next) {
+//   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
+//   next();
+// });
 
 export const Blog = mongoose.model("Blog", blogSchema);

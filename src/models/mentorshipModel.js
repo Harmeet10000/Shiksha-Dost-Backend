@@ -14,11 +14,6 @@ const mentorshipSchema = new Schema(
       ref: "Mentor",
       required: true,
       index: true,
-      s,
-    },
-    desc: {
-      type: String, // Detailed description of the mentorship request
-      required: true,
     },
     schedule: {
       on: {
@@ -35,12 +30,19 @@ const mentorshipSchema = new Schema(
         required: [true, "End time is required for the schedule"],
       },
     },
+    razorpay_order_id: {
+      type: String,
+      unique: true,
+    },
     paymentDetails: {
       type: Object,
     },
     isPaid: {
       type: Boolean,
       default: false,
+    },
+    meetingLink: {
+      type: String,
     },
     isCompleted: {
       type: Boolean,
@@ -56,9 +58,6 @@ const mentorshipSchema = new Schema(
       comments: {
         type: String,
       },
-    },
-    meetingLink: {
-      type: String,
     },
     rescheduleCount: {
       type: Number,
@@ -82,5 +81,16 @@ mentorshipSchema.index({ user: 1, status: 1 }); // Optimize user-specific status
 mentorshipSchema.index({ mentor: 1, status: 1 }); // Optimize mentor-specific status queries
 mentorshipSchema.index({ schedule: 1 }); // Optimize schedule-related queries
 
-// Export the Mentorship model
+// Query middleware to populate user and mentor fields
+mentorshipSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "user",
+    select: "name email profile_imageURL", 
+  }).populate({
+    path: "mentor",
+    select: "name email profile_imageURL",  
+  });
+  next();
+});
+
 export const Mentorship = mongoose.model("Mentorship", mentorshipSchema);
