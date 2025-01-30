@@ -8,24 +8,29 @@ import {
   featureBlog,
   getMentorBlogs,
   unfeatureBlog,
-  likeBlog,
+  toggleLikeBlog,
   shareBlog,
   saveBlog,
+  getLatestBlog,
+  getProminentBlogs,
+  toggleProminentBlog,
 } from "../controllers/blogController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 import { increaseVisits } from "../middlewares/increaseVisits.js";
 import { getUploadS3URL } from "../helpers/s3.js";
-
 
 const router = express.Router();
 
 router.use(protect);
 router.get("/getAllBlogs", getAllBlogs);
 router.post("/getUploadS3URL", getUploadS3URL);
-router.get("/:slug", increaseVisits, getBlog);
-router.post("/like/:id", likeBlog);
+router.post("/like/:id", toggleLikeBlog);
 router.post("/share/:id", shareBlog);
 router.patch("/save-blog/:blogId", saveBlog);
+router.get("/getProminentBlogs", getProminentBlogs);
+router.get("/getLatestBlogs", getLatestBlog);
+router.post("/toggleProminentBlog/:id", restrictTo("admin"), toggleProminentBlog);
+router.get("/:slug", increaseVisits, getBlog);
 
 router.use(restrictTo("mentor"));
 router.post("/createBlog", createBlog);

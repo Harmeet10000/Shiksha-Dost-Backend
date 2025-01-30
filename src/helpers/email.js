@@ -117,7 +117,7 @@ export const Resendmail = catchAsync(async (info) => {
       </div>
     </body>
     </html>`;
-  } else if (role === "user" && use === "meeting") {
+  } else if (role === "student" && use === "meeting") {
     // User meeting details email template
     subject = "Meeting Details from ShikshaDost";
     htmlContent = `
@@ -155,7 +155,7 @@ export const Resendmail = catchAsync(async (info) => {
       </div>
     </body>
     </html>`;
-  } else if (role === "user" && use === "signup") {
+  } else if (role === "student" && use === "signup") {
     // Student case
     htmlContent = `
 <!DOCTYPE html>

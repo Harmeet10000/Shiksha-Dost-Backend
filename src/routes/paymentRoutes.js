@@ -11,7 +11,7 @@ router.get("/getkey", (req, res) =>
   res.status(200).json({ key: process.env.RAZORPAY_KEY_ID })
 );
 router.post("/checkout", checkout);
-router.get("/receipt/:payment_id", fetchReceipt);
+router.post("/receipt/:mentorshipId", fetchReceipt);
 
 
 export default router;

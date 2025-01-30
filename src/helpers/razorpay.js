@@ -3,6 +3,7 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import crypto from "crypto";
 import { Mentorship } from "../models/mentorshipModel.js";
+import { sendMeetMail } from "../controllers/mentorshipController.js";
 
 const instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -15,7 +16,7 @@ export const checkout = catchAsync(async (req, res, next) => {
     currency: "INR",
   };
   const order = await instance.orders.create(options);
-  console.log(order);
+  // console.log(order);
 
   res.status(200).json({
     success: true,
@@ -43,7 +44,7 @@ export const paymentVerification = catchAsync(async (req, res, next) => {
   if (isAuthentic) {
     // Update mentorship model
     const mentorship = await Mentorship.findOneAndUpdate(
-      { "razorpay_order_id": razorpay_order_id }, // Find the document with the matching order ID
+      { razorpay_order_id: razorpay_order_id }, // Find the document with the matching order ID
       {
         paymentDetails: {
           razorpay_order_id,
@@ -54,7 +55,8 @@ export const paymentVerification = catchAsync(async (req, res, next) => {
       },
       { new: true } // Return the updated document
     );
-    console.log(mentorship);
+    // console.log(mentorship);
+    sendMeetMail(mentorship);
     // Send response
     res.status(200).json({
       success: true,
@@ -68,36 +70,52 @@ export const paymentVerification = catchAsync(async (req, res, next) => {
 });
 
 export const fetchReceipt = catchAsync(async (req, res, next) => {
-  const { payment_id } = req.params;
+  const { razorpay_payment_id } = req.body;
+  const { mentorshipId } = req.params;
 
-  try {
-    const paymentDetails = await instance.payments.fetch(payment_id);
+  // Fetch mentorship details
+  const mentorship = await Mentorship.findById(mentorshipId);
 
-    if (!paymentDetails) {
-      return next(new AppError("Payment not found!", 404));
-    }
+  console.log(mentorship);
+  // Extract user details
+  const name = req.user.name;
+  const email = req.user.email;
+  const contact = mentorship.userPhone;
 
-    // Extract the receipt (if available)
-    const receipt = paymentDetails.receipt;
+  // Fetch payment details from Razorpay
+  const paymentDetails = await instance.payments.fetch(razorpay_payment_id);
 
-    if (!receipt) {
-      return res.status(200).json({
-        status: "success",
-        message: "No receipt found for this payment.",
-        data: { paymentDetails },
-      });
-    }
-
-    // If receipt exists, return it
-    res.status(200).json({
-      status: "success",
-      message: "Receipt fetched successfully.",
-      data: {
-        receipt,
-        paymentDetails,
+  // Construct invoice details
+  const invoiceData = {
+    type: "invoice",
+    description: `Invoice for Mentorship Session with ${mentorship.mentor.name}`,
+    customer: {
+      name,
+      email,
+      contact,
+    },
+    line_items: [
+      {
+        name: "Mentorship",
+        description: "One-on-one mentorship session conducted online.",
+        amount: paymentDetails.amount,
+        currency: paymentDetails.currency,
+        quantity: 1,
       },
-    });
-  } catch (error) {
-    return next(new AppError("Failed to fetch payment details.", 500));
-  }
+    ],
+    sms_notify: 1,
+    email_notify: 1,
+  };
+
+  // Create invoice
+  const invoice = await instance.invoices.create(invoiceData);
+
+  // Send invoice via email
+  await instance.invoices.notifyBy("email", invoice.id);
+
+  res.status(200).json({
+    success: true,
+    message: "Invoice generated and sent successfully",
+    invoice,
+  });
 });

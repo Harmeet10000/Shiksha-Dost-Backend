@@ -36,6 +36,10 @@ const blogSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isProminent: {
+      type: Boolean,
+      default: false,
+    },
     visit: {
       type: Number,
       default: 0,
@@ -84,6 +88,30 @@ blogSchema.virtual("comments", {
   foreignField: "blogId", // Field in Comment
   justOne: false,
 });
+
+blogSchema.pre(/^find/, function (next) {
+  this.populate([
+    {
+      path: "author",
+      select: "name profile_imageURL",
+    },
+    {
+      path: "comments",
+      populate: [
+        {
+          path: "user",
+          select: "name profile_imageURL",
+        },
+        {
+          path: "replies.user",
+          select: "name profile_imageURL",
+        },
+      ],
+    },
+  ]);
+  next();
+});
+
 
 // blogSchema.post(/^find/, function (docs, next) {
 //   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
