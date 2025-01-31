@@ -36,6 +36,10 @@ const blogSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isProminent: {
+      type: Boolean,
+      default: false,
+    },
     visit: {
       type: Number,
       default: 0,

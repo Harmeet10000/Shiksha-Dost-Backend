@@ -167,3 +167,40 @@ export const saveBlog = catchAsync(async (req, res, next) => {
     savedBlogs: updatedUser.savedBlogs,
   });
 });
+
+export const getLatestBlog = catchAsync(async (req, res, next) => {
+  const latestBlogs = await Blog.find().sort({ createdAt: -1 }).limit(5);
+
+  res.status(200).json({
+    success: true,
+    count: latestBlogs.length,
+    data: latestBlogs,
+  });
+});
+
+export const toggleProminentBlog = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const blog = await Blog.findById(id);
+
+  blog.isProminent = !blog.isProminent;
+  await blog.save();
+
+  res.status(200).json({
+    action: blog.isProminent ? "marked" : "unmarked",
+    message: blog.isProminent
+      ? "Blog marked as prominent"
+      : "Blog unmarked as prominent",
+    isProminent: blog.isProminent,
+  });
+});
+
+export const getProminentBlogs = catchAsync(async (req, res, next) => {
+  const prominentBlogs = await Blog.find({ isProminent: true }).limit(10);
+
+  res.status(200).json({
+    success: true,
+    count: prominentBlogs.length,
+    data: prominentBlogs,
+  });
+});
