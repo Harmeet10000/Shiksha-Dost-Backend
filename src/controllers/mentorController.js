@@ -19,6 +19,7 @@ export const getUnavailability = catchAsync(async (req, res, next) => {
   let objectId;
   try {
     objectId = new mongoose.Types.ObjectId(id); // Convert to ObjectId
+  // eslint-disable-next-line no-unused-vars
   } catch (error) {
     return next(new AppError("Invalid Mentor ID", 400)); // Handle invalid ObjectId
   }
@@ -58,6 +59,7 @@ export const checkUnavailability = catchAsync(async (req, res, next) => {
   let mentorId;
   try {
     mentorId = new mongoose.Types.ObjectId(id);
+    // eslint-disable-next-line no-unused-vars
   } catch (error) {
     return next(new AppError("Invalid Mentor ID", 400));
   }
@@ -104,6 +106,7 @@ export const checkUnavailability = catchAsync(async (req, res, next) => {
       },
     },
   ]);
+  console.log("MS",mentorships);
 
   // Check if any conflicts exist
   if (mentorships.length > 0) {

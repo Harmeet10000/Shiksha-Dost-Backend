@@ -9,6 +9,7 @@ export default {
   externals: [webpackNodeExternals()], // Exclude node_modules from the bundle
   output: {
     filename: "index.cjs",
+    // eslint-disable-next-line no-undef
     path: path.resolve(process.cwd(), "dist"),
   },
   module: {

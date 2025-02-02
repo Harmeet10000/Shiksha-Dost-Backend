@@ -59,6 +59,7 @@ export const unfeatureBlog = catchAsync(async (req, res, next) => {
   });
 });
 
+// eslint-disable-next-line no-unused-vars
 export const toggleLikeBlog = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const userId = req.user._id;
@@ -77,7 +78,7 @@ export const toggleLikeBlog = catchAsync(async (req, res, next) => {
     return res.status(200).json({ action: "like", message: "Blog liked" });
   }
 });
-
+// eslint-disable-next-line no-unused-vars
 export const shareBlog = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
@@ -94,7 +95,7 @@ export const shareBlog = catchAsync(async (req, res, next) => {
     },
   });
 });
-
+// eslint-disable-next-line no-unused-vars
 export const saveBlog = catchAsync(async (req, res, next) => {
   const { blogId } = req.params;
   const userId = req.user.id;
@@ -132,7 +133,7 @@ export const saveBlog = catchAsync(async (req, res, next) => {
     savedBlogs: updatedUser.savedBlogs,
   });
 });
-
+// eslint-disable-next-line no-unused-vars
 export const getLatestBlog = catchAsync(async (req, res, next) => {
   const latestBlogs = await Blog.find().sort({ createdAt: -1 }).limit(5);
 
@@ -143,6 +144,16 @@ export const getLatestBlog = catchAsync(async (req, res, next) => {
   });
 });
 
+export const getFeaturedBlog = catchAsync(async (req, res, next) => {
+  const featuredBlog = await Blog.findOne({ isFeatured: true });
+
+  res.status(200).json({
+    success: true,
+    data: featuredBlog,
+  });
+});
+
+// eslint-disable-next-line no-unused-vars
 export const toggleProminentBlog = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
@@ -159,7 +170,7 @@ export const toggleProminentBlog = catchAsync(async (req, res, next) => {
     isProminent: blog.isProminent,
   });
 });
-
+// eslint-disable-next-line no-unused-vars
 export const getProminentBlogs = catchAsync(async (req, res, next) => {
   const prominentBlogs = await Blog.find({ isProminent: true }).limit(10);
 

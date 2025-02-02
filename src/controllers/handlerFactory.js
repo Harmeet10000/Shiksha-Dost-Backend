@@ -17,7 +17,7 @@ export const getAll = (Model, popOptions) =>
     } else if (req.user.role === "user" && Model.modelName === "Mentorship") {
       filter = { mentor: req.user.id };
     }
-    console.log(filter);
+    // console.log(filter);
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
@@ -70,6 +70,7 @@ export const getOne = (Model, popOptions) =>
   });
 
 export const createOne = (Model) =>
+  // eslint-disable-next-line no-unused-vars
   catchAsync(async (req, res, next) => {
     if (Model.modelName === "Blog") {
       req.body.author = req.user._id;

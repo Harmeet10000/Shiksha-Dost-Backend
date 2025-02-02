@@ -1,5 +1,4 @@
 import catchAsync from "../utils/catchAsync.js";
-import AppError from "../utils/appError.js";
 import { User } from "../models/userModel.js";
 import { blockOne, deleteOne, getAll, updateOne } from "./handlerFactory.js";
 import { Mentor } from "../models/mentorModel.js";
@@ -20,7 +19,7 @@ export const getUserDPPs = getAll(User, {
   path: "solvedDPPs.dpp",
   select: "category subject topicName year totalMarks", // Only include specific fields of DPP
 });
-
+// eslint-disable-next-line no-unused-vars
 export const submitDPP = catchAsync(async (req, res, next) => {
   const { userAnswers, durationTaken, startAt, submittedAt, dppId } = req.body;
 

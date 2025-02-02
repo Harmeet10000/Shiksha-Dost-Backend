@@ -13,13 +13,17 @@ export const upload = multer({ storage: storage });
 
 export const uploadToS3 = catchAsync(async (file, destination) => {
   const s3Client = new S3Client({
+    // eslint-disable-next-line no-undef
     region: process.env.BUCKET_REGION,
     credentials: {
+      // eslint-disable-next-line no-undef
       accessKeyId: process.env.ACCESS_KEY,
+      // eslint-disable-next-line no-undef  
       secretAccessKey: process.env.SECRET_ACCESS_KEY,
     },
   });
   const uploadParams = {
+    // eslint-disable-next-line no-undef
     Bucket: process.env.BUCKET_NAME,
     Key: `${destination}/${file.originalname}`,
     Body: file.buffer,
@@ -38,14 +42,18 @@ export const uploadToS3 = catchAsync(async (file, destination) => {
 export const getS3URL = (fileName) => {
   return new Promise((resolve, reject) => {
     const s3Client = new S3Client({
+      // eslint-disable-next-line no-undef
       region: process.env.BUCKET_REGION,
       credentials: {
+        // eslint-disable-next-line no-undef
         accessKeyId: process.env.ACCESS_KEY,
+        // eslint-disable-next-line no-undef
         secretAccessKey: process.env.SECRET_ACCESS_KEY,
       },
     });
 
     const getObjectParams = {
+      // eslint-disable-next-line no-undef
       Bucket: process.env.BUCKET_NAME,
       Key: `material/${fileName}`,
     };
@@ -70,9 +78,12 @@ export const getUploadS3URL = catchAsync(async (req, res, next) => {
   }
 
   const s3Client = new S3Client({
+    // eslint-disable-next-line no-undef
     region: process.env.BUCKET_REGION,
     credentials: {
+      // eslint-disable-next-line no-undef
       accessKeyId: process.env.ACCESS_KEY,
+      // eslint-disable-next-line no-undef
       secretAccessKey: process.env.SECRET_ACCESS_KEY,
     },
   });
@@ -80,6 +91,7 @@ export const getUploadS3URL = catchAsync(async (req, res, next) => {
   const path = `${destination}/${Date.now()}-${filename}`;
 
   const params = {
+    // eslint-disable-next-line no-undef
     Bucket: process.env.BUCKET_NAME,
     Key: path,
     ContentType: contentType,

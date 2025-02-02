@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
-import hpp from "hpp";
+// import hpp from "hpp";
 import cors from "cors";
 import AppError from "./utils/appError.js";
 import globalErrorHandler from "./middlewares/errorMiddleware.js";
@@ -89,6 +89,8 @@ app.use("/api/v1/material", materialRoutes);
 app.use("/api/v1/mentorship", mentorshipRoutes);
 app.use("/api/v1/dpp", dppRoutes);
 app.use("/api/v1/payment", paymentRoutes);
+
+// 4) CATCHES ALL ROUTES THAT ARE NOT DEFINED
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });

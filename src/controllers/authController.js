@@ -5,10 +5,14 @@ import AppError from "../utils/appError.js";
 import { Resendmail } from "../helpers/email.js";
 import { Mentor } from "../models/mentorModel.js";
 import { User } from "../models/userModel.js";
+import { oauth2Client } from "../config/auth.js";
+import { googleConfig } from "../config/googleConfig.js";
 
 //Generate JWT token
 const signToken = (id, role) => {
+  // eslint-disable-next-line no-undef
   return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+    // eslint-disable-next-line no-undef
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
@@ -17,10 +21,12 @@ const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id, user.role);
   const cookieOptions = {
     expires: new Date(
+      // eslint-disable-next-line no-undef
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
   };
+  // eslint-disable-next-line no-undef
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
   res.cookie("jwt", token, cookieOptions);
@@ -41,11 +47,15 @@ const createSendToken = (user, statusCode, res) => {
 const createSendEmail = async (user, req, next) => {
   try {
     const verificationToken = user.createEmailVerificationToken();
-    await user.save({ validateBeforeSave: false });
 
+    console.log(verificationToken);
+    await user.save({ validateBeforeSave: false });
+    // eslint-disable-next-line no-undef
     const baseUrl = process.env.FRONTEND_URL;
-    const verificationURL = `${baseUrl}/verify-email/${verificationToken}`;
-    // console.log(verificationURL);
+    const verificationURL = `${baseUrl}/verify-email/${encodeURIComponent(
+      verificationToken
+    )}`;
+    console.log(verificationURL);
     let info = {
       name: user.name,
       to: user.email,
@@ -55,6 +65,7 @@ const createSendEmail = async (user, req, next) => {
     };
 
     await Resendmail(info);
+    // eslint-disable-next-line no-unused-vars
   } catch (err) {
     user.emailVerificationToken = undefined;
     user.emailVerificationExpires = undefined;
@@ -79,6 +90,7 @@ export const signup = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, res);
 });
 
+// eslint-disable-next-line no-unused-vars
 export const signupMentor = catchAsync(async (req, res, next) => {
   const newUser = await Mentor.create({
     name: req.body.name,
@@ -98,16 +110,22 @@ export const signupMentor = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, res);
 });
 
+// eslint-disable-next-line no-unused-vars
 export const verifyEmail = catchAsync(async (req, res, next) => {
+  const rawToken = decodeURIComponent(req.params.token);
+
+  // Hash the token for comparison
   const hashedToken = crypto
     .createHash("sha256")
-    .update(req.params.token)
+    .update(rawToken)
     .digest("hex");
+  console.log(hashedToken, Date.now());
 
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
     emailVerificationExpires: { $gt: Date.now() },
   });
+  console.log(user);
 
   if (!user) {
     return res.status(400).json({
@@ -173,7 +191,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
   try {
-    await sendEmail({
+    await Resendmail({
       email: user.email,
       subject: "Your password reset token (valid for 10 min)",
       message,
@@ -183,6 +201,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
       status: "success",
       message: "Token sent to email!",
     });
+    // eslint-disable-next-line no-unused-vars
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
@@ -239,3 +258,50 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   // 4) Log user in, send JWT
   createSendToken(user, 200, res);
 });
+
+export const getAuthUrl = (req, res) => {
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: googleConfig.scopes,
+  });
+  res.redirect(authUrl);
+};
+
+export const handleCallback = async (req, res) => {
+  try {
+    const { code } = req.query;
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    // Store tokens in your database here
+    // You might want to associate them with a user session
+
+    const payload = {
+      googleTokens: tokens,
+      //  userId: req.user.id, // Your app's user ID
+    };
+    console.log("payload", payload);
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    const cookieOptions = {
+      expires: new Date(
+        // eslint-disable-next-line no-undef
+        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      ),
+      httpOnly: true,
+    };
+    // eslint-disable-next-line no-undef
+    if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+
+    res.cookie("Gtoken", token, cookieOptions);
+
+    res.json({
+      message: "Authentication successful",
+    });
+  } catch (error) {
+    console.error("OAuth callback error:", error);
+    res.status(500).send("Authentication failed");
+  }
+};

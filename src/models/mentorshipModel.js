@@ -50,8 +50,8 @@ const mentorshipSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    meetingLink: {
-      type: String,
+    meetDetails: {
+      type: Object,
     },
     isCompleted: {
       type: Boolean,

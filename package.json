@@ -9,6 +9,7 @@
     "dev:prod": "nodemon dist/index.cjs",
     "start": "node dist/index.cjs",
     "build": "npx webpack --config webpack.config.js",
+    "lint": "npx eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -37,6 +38,7 @@
     "express": "^4.21.2",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^7.5.0",
+    "googleapis": "^144.0.0",
     "helmet": "^8.0.0",
     "hpp": "^0.2.3",
     "jsonwebtoken": "^9.0.2",
@@ -59,6 +61,7 @@
     "@babel/plugin-transform-runtime": "^7.25.9",
     "@babel/preset-env": "^7.26.7",
     "@babel/runtime": "^7.26.7",
+    "@eslint/js": "^9.19.0",
     "babel-loader": "^9.2.1",
     "dotenv-webpack": "^8.1.0",
     "nodemon": "^3.1.9",

@@ -9,6 +9,8 @@ import {
   signupMentor,
   updatePassword,
   verifyEmail,
+  getAuthUrl,
+  handleCallback,
 } from "../controllers/authController.js";
 
 
@@ -19,6 +21,8 @@ router.post("/login", login);
 router.post("/loginMentor", loginMentor);
 router.post("/signupMentor", signupMentor);
 router.get("/verify-email/:token", verifyEmail);
+router.get("/google", getAuthUrl);
+router.get("/google/callback", handleCallback);
 
 
 router.use(protect);

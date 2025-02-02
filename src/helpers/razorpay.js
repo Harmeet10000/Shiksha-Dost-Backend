@@ -3,14 +3,16 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import crypto from "crypto";
 import { Mentorship } from "../models/mentorshipModel.js";
-import { sendMeetMail } from "../controllers/mentorshipController.js";
+import { sendMeetMail, sendReceiptMail } from "../controllers/mentorshipController.js";
 
 const instance = new Razorpay({
+  // eslint-disable-next-line no-undef
   key_id: process.env.RAZORPAY_KEY_ID,
+  // eslint-disable-next-line no-undef
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-export const checkout = catchAsync(async (req, res, next) => {
+export const checkout = catchAsync(async (req, res) => {
   const options = {
     amount: Number(req.body.amount * 100),
     currency: "INR",
@@ -35,6 +37,7 @@ export const paymentVerification = catchAsync(async (req, res, next) => {
   const body = razorpay_order_id + "|" + razorpay_payment_id;
 
   const expectedSignature = crypto
+    // eslint-disable-next-line no-undef
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
     .update(body.toString())
     .digest("hex");
@@ -55,7 +58,8 @@ export const paymentVerification = catchAsync(async (req, res, next) => {
       },
       { new: true } // Return the updated document
     );
-    // console.log(mentorship);
+    console.log(mentorship);
+    // sendReceiptMail(mentorship);
     sendMeetMail(mentorship);
     // Send response
     res.status(200).json({
@@ -69,53 +73,3 @@ export const paymentVerification = catchAsync(async (req, res, next) => {
   }
 });
 
-export const fetchReceipt = catchAsync(async (req, res, next) => {
-  const { razorpay_payment_id } = req.body;
-  const { mentorshipId } = req.params;
-
-  // Fetch mentorship details
-  const mentorship = await Mentorship.findById(mentorshipId);
-
-  console.log(mentorship);
-  // Extract user details
-  const name = req.user.name;
-  const email = req.user.email;
-  const contact = mentorship.userPhone;
-
-  // Fetch payment details from Razorpay
-  const paymentDetails = await instance.payments.fetch(razorpay_payment_id);
-
-  // Construct invoice details
-  const invoiceData = {
-    type: "invoice",
-    description: `Invoice for Mentorship Session with ${mentorship.mentor.name}`,
-    customer: {
-      name,
-      email,
-      contact,
-    },
-    line_items: [
-      {
-        name: "Mentorship",
-        description: "One-on-one mentorship session conducted online.",
-        amount: paymentDetails.amount,
-        currency: paymentDetails.currency,
-        quantity: 1,
-      },
-    ],
-    sms_notify: 1,
-    email_notify: 1,
-  };
-
-  // Create invoice
-  const invoice = await instance.invoices.create(invoiceData);
-
-  // Send invoice via email
-  await instance.invoices.notifyBy("email", invoice.id);
-
-  res.status(200).json({
-    success: true,
-    message: "Invoice generated and sent successfully",
-    invoice,
-  });
-});

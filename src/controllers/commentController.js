@@ -1,12 +1,12 @@
 import catchAsync from "../utils/catchAsync.js";
-import AppError from "../utils/appError.js";
-import { createOne, deleteOne, getAll } from "./handlerFactory.js";
+import { createOne, deleteOne } from "./handlerFactory.js";
 import { Comment } from "../models/commentModel.js";
 
 export const addComment = createOne(Comment);
 
 export const deleteComment = deleteOne(Comment);
 
+// eslint-disable-next-line no-unused-vars
 export const replyComment = catchAsync(async (req, res, next) => {
   const { commentId } = req.params;
   const { desc } = req.body;
