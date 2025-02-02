@@ -120,6 +120,7 @@ const userSchema = new Schema(
 
 userSchema.index({ email: 1, isVerified: 1 });
 userSchema.index({ active: 1 });
+userSchema.index({ emailVerificationToken : 1 });
 
 userSchema.pre(/^find/, function (next) {
   this.find({
@@ -153,7 +154,7 @@ userSchema.methods.createEmailVerificationToken = function () {
     .createHash("sha256")
     .update(verificationToken)
     .digest("hex");
-  this.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+  this.emailVerificationExpires = Date.now() + 7 * 24 * 60 * 60 * 1000; 
   return verificationToken;
 };
 

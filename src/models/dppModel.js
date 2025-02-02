@@ -30,24 +30,21 @@ const dppSchema = new Schema(
     problems: [
       {
         question: {
-          type: String,
-          required: [true, "A problem must have a question"],
+          text: { type: String }, // The question as text
+          S3url: { type: String }, // Optional S3 URL
         },
-        options: {
-          type: [String],
-          required: [true, "A problem must have options"],
-        },
+        options: [
+          {
+            text: { type: String }, // The option as text
+            S3url: { type: String }, // Optional S3 URL
+          },
+        ],
         correctOption: {
-          type: String,
-          required: [true, "A problem must have a correct option"],
+          text: { type: String }, // The correct answer as text
+          S3url: { type: String }, // Optional S3 URL
         },
         marks: {
           type: Number,
-          required: [true, "A problem must have marks"],
-        },
-        S3url: {
-          type: String,
-          required: [true, "A DPP must have a S3 URL"],
         },
       },
     ],
@@ -63,6 +60,7 @@ const dppSchema = new Schema(
   { timestamps: true }
 );
 
+// Optimized index for query performance
 dppSchema.index({ user: 1, dueDate: -1 });
 
 export const DPP = mongoose.model("DPP", dppSchema);
