@@ -8,7 +8,7 @@
     "dev": "nodemon src/index.js",
     "dev:prod": "nodemon dist/index.cjs",
     "start": "node dist/index.cjs",
-    "build": "npx webpack --config webpack.config.js",
+    "build": "rm -rf dist && npx webpack --config webpack.config.js",
     "lint": "npx eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

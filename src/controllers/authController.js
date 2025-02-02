@@ -51,10 +51,7 @@ const createSendEmail = async (user, req, next) => {
     console.log(verificationToken);
     await user.save({ validateBeforeSave: false });
     // eslint-disable-next-line no-undef
-    const baseUrl = process.env.FRONTEND_URL;
-    const verificationURL = `${baseUrl}/verify-email/${encodeURIComponent(
-      verificationToken
-    )}`;
+    const verificationURL = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
     console.log(verificationURL);
     let info = {
       name: user.name,
@@ -112,21 +109,17 @@ export const signupMentor = catchAsync(async (req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 export const verifyEmail = catchAsync(async (req, res, next) => {
-  const rawToken = decodeURIComponent(req.params.token);
-
-  // Hash the token for comparison
   const hashedToken = crypto
     .createHash("sha256")
-    .update(rawToken)
+    .update(req.params.token.trim())
     .digest("hex");
-  console.log(hashedToken, Date.now());
+  console.log("HT", hashedToken);
 
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
     emailVerificationExpires: { $gt: Date.now() },
   });
-  console.log(user);
-
+  console.log("User", user);
   if (!user) {
     return res.status(400).json({
       status: "error",
@@ -171,23 +164,19 @@ export const loginMentor = catchAsync(async (req, res, next) => {
 });
 
 export const forgotPassword = catchAsync(async (req, res, next) => {
-  // 1) Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new AppError("There is no user with email address.", 404));
   }
 
-  // 2) Generate the random reset token
   const resetToken = user.createPasswordResetToken();
 
   await user.save({ validateBeforeSave: false });
 
-  // 3) Send it to user's email
   const resetURL = `${req.protocol}://${req.get(
     "host"
   )}/api/v1/users/resetPassword/${resetToken}`;
 
-  // const receipients = ` ${user.name} <${user.email}>`;
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
   try {

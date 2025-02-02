@@ -31,8 +31,8 @@ router.patch("/save-blog/:blogId", saveBlog);
 router.get("/getProminentBlogs", getProminentBlogs);
 router.get("/getLatestBlogs", getLatestBlog);
 router.post("/toggleProminentBlog/:id", restrictTo("admin"), toggleProminentBlog);
-router.get("/:slug", increaseVisits, getBlog);
 router.get("/getFeaturedBlog", getFeaturedBlog);
+router.get("/:slug", increaseVisits, getBlog);
 
 router.use(restrictTo("mentor"));
 router.post("/createBlog", createBlog);
