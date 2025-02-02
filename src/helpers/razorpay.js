@@ -58,16 +58,19 @@ export const paymentVerification = catchAsync(async (req, res, next) => {
       },
       { new: true } // Return the updated document
     );
-    console.log(mentorship);
-    // sendReceiptMail(mentorship);
+    // console.log(mentorship);
     sendMeetMail(mentorship);
     // Send response
-    res.status(200).json({
-      success: true,
-      data: {
-        razorpay_payment_id,
-      },
-    });
+    res.redirect(
+      `${process.env.FRONTEND_URL}/psf?payment_id=${razorpay_payment_id}`
+    );
+
+    // res.status(200).json({
+    //   success: true,
+    //   data: {
+    //     razorpay_payment_id,
+    //   },
+    // });
   } else {
     return next(new AppError("Payment verification failed!", 400));
   }
