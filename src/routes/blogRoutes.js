@@ -8,7 +8,7 @@ import {
   featureBlog,
   getMentorBlogs,
   unfeatureBlog,
-  likeBlog,
+  toggleLikeBlog,
   shareBlog,
   saveBlog,
   getProminentBlogs,
@@ -24,7 +24,7 @@ const router = express.Router();
 router.use(protect);
 router.get("/getAllBlogs", getAllBlogs);
 router.post("/getUploadS3URL", getUploadS3URL);
-router.post("/like/:id", likeBlog);
+router.post("/like/:id", toggleLikeBlog);
 router.post("/share/:id", shareBlog);
 router.patch("/save-blog/:blogId", saveBlog);
 router.get("/getProminentBlogs", getProminentBlogs);

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
+import validator from "validator";
 
 const mentorshipSchema = new Schema(
   {
@@ -29,6 +30,14 @@ const mentorshipSchema = new Schema(
         type: String, // End time in HH:mm format
         required: [true, "End time is required for the schedule"],
       },
+    },
+    userPhone: {
+      type: String,
+      required: [true, "User phone number is required"],
+      validate: [
+        validator.isMobilePhone,
+        "Please provide a valid phone number",
+      ],
     },
     razorpay_order_id: {
       type: String,
@@ -85,10 +94,10 @@ mentorshipSchema.index({ schedule: 1 }); // Optimize schedule-related queries
 mentorshipSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
-    select: "name email profile_imageURL", 
+    select: "name email profile_imageURL",
   }).populate({
     path: "mentor",
-    select: "name email profile_imageURL",  
+    select: "name email profile_imageURL",
   });
   next();
 });

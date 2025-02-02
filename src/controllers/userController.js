@@ -4,6 +4,7 @@ import { User } from "../models/userModel.js";
 import { blockOne, deleteOne, getAll, updateOne } from "./handlerFactory.js";
 import { Mentor } from "../models/mentorModel.js";
 import { DPP } from "../models/dppModel.js";
+import { Mentorship } from "../models/mentorshipModel.js";
 
 export const blockStudent = blockOne(User);
 export const deleteStudent = deleteOne(User);
@@ -12,6 +13,9 @@ export const blockMentor = blockOne(Mentor);
 export const deleteMentor = deleteOne(Mentor);
 
 export const updateStudentProfile = updateOne(User);
+
+export const getUserMentorship = getAll(Mentorship);
+
 
 export const getUserDPPs = getAll(User, {
   path: "solvedDPPs.dpp",

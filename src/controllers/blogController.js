@@ -95,7 +95,7 @@ export const unfeatureBlog = catchAsync(async (req, res, next) => {
   });
 });
 
-export const likeBlog = catchAsync(async (req, res, next) => {
+export const toggleLikeBlog = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const userId = req.user._id;
 
@@ -143,12 +143,12 @@ export const saveBlog = catchAsync(async (req, res, next) => {
   const user = await User.findById(userId);
   // console.log("user", user);
   const alreadySaved = user.savedBlogs.some(
-    (post) => post.blogId.toString() === blogId
+    (post) => post.blogId.id === blogId
   );
 
   if (alreadySaved) {
     user.savedBlogs = user.savedBlogs.filter(
-      (post) => post.blogId.toString() !== blogId
+      (post) => post.blogId.id !== blogId
     );
   } else {
     user.savedBlogs.push({ blogId });

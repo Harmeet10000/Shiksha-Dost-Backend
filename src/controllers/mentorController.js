@@ -11,6 +11,8 @@ export const getAllMentor = getAll(Mentor);
 
 export const getMentorDetails = getOne(Mentor);
 
+export const getMentorMentorship = getAll(Mentorship);
+
 export const getUnavailability = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 

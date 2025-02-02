@@ -4,7 +4,7 @@ import { Mentorship } from "../models/mentorshipModel.js";
 import { Resendmail } from "../helpers/email.js";
 
 export const createMentorship = catchAsync(async (req, res, next) => {
-  const { date, slot, time, mentorId, razorpay_order_id } = req.body;
+  const { date, slot, time, mentorId, userPhone, razorpay_order_id } = req.body;
 
   // Validate the required fields
   if (!date || !slot || !time || !mentorId) {
@@ -65,6 +65,7 @@ export const createMentorship = catchAsync(async (req, res, next) => {
     user: req.user._id, // Authenticated user ID
     mentor: mentorId,
     razorpay_order_id: razorpay_order_id,
+    userPhone: userPhone,
     schedule: {
       on: new Date(date), // Store the date
       start: formattedStartTime, // Store the start time
@@ -81,14 +82,7 @@ export const createMentorship = catchAsync(async (req, res, next) => {
   });
 });
 
-export const sendMeetMail = catchAsync(async (req, res, next) => {
-  const { userId, mentorId } = req.body;
-
-  const mentorship = await Mentorship.findOne({
-    user: userId,
-    mentor: mentorId,
-  })
-
+export const sendMeetMail = catchAsync(async (mentorship) => {
   const { user, mentor, schedule, meetingLink } = mentorship;
 
   const userEmailData = {
@@ -110,19 +104,10 @@ export const sendMeetMail = catchAsync(async (req, res, next) => {
     role: "mentor",
     use: "meeting",
   };
+  // console.log(userEmailData, mentorEmailData)
 
-  // Function to send email to both user and mentor
-  const sendEmailPromises = [
-    Resendmail(userEmailData),
-    Resendmail(mentorEmailData),
-  ];
+  // Send emails to both user and mentor
+  await Promise.all([Resendmail(userEmailData), Resendmail(mentorEmailData)]);
 
-  // Wait for both emails to be sent
-  await Promise.all(sendEmailPromises);
-
-  // Send back a 200 response after both emails are sent
-  res.status(200).json({
-    success: true,
-    message: "Meeting emails sent successfully",
-  });
+  console.log("Meeting emails sent successfully");
 });

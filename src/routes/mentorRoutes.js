@@ -8,6 +8,7 @@ import {
   updateMentor,
   getUnavailability,
   getMentorDetails,
+  getMentorMentorship,
 } from "../controllers/mentorController.js";
 import { getUploadS3URL } from "../helpers/s3.js";
 
@@ -25,6 +26,7 @@ router.patch("/:id", updateMentor);
 router.patch("/unavailability/:id", unavailabilityUpdate);
 router.patch("/removeUnavailability/:id", removeUnavailability);
 router.post("/getUploadS3URL", getUploadS3URL);
+router.get("/get", getMentorMentorship);
 
 
 export default router;

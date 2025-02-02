@@ -12,8 +12,11 @@ export const getAll = (Model, popOptions) =>
     } else if (req.params.blogId && Model.modelName === "Comment") {
       // Handle blog comments (e.g., /:blogId/)
       filter = { blog: req.params.blogId };
+    } else if (req.user.role === "mentor" && Model.modelName === "Mentorship") {
+      filter = { mentor: req.user.id };
+    } else if (req.user.role === "user" && Model.modelName === "Mentorship") {
+      filter = { mentor: req.user.id };
     }
-
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
