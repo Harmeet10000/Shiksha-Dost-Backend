@@ -7,7 +7,7 @@ connectDB()
     // eslint-disable-next-line no-undef
     const server = app.listen(process.env.PORT || 8000, () => {
       // eslint-disable-next-line no-undef
-      console.log(`Server is running at port: ${process.env.PORT}, ${process.env.NODE_ENV}`);
+      console.log(`Server is running at port: ${process.env.PORT}, in ${process.env.NODE_ENV}`);
     });
 
     // eslint-disable-next-line no-undef

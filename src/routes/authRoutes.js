@@ -16,7 +16,7 @@ import {
 const router = express.Router();
 
 router.get("/", (req, res) =>
-  res.json({ message: "Welcome to the Mentorship API 🚀. Running in ECS3 🎉" })
+  res.json({ message: "Welcome to the Mentorship API 🚀. Running in ECS 🎉" })
 );
 
 router.get("/health", (req, res) => {

@@ -53,11 +53,6 @@ const mentorshipSchema = new Schema(
     meetDetails: {
       type: Object,
     },
-    isCompleted: {
-      type: Boolean,
-      default: false,
-      index: true,
-    },
     feedback: {
       rating: {
         type: Number,
@@ -78,7 +73,7 @@ const mentorshipSchema = new Schema(
     status: {
       type: String,
       enum: ["Pending", "Scheduled", "In Progress", "Completed", "Cancelled"],
-      default: "Pending",
+      default: "Scheduled",
       index: true,
     },
   },

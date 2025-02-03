@@ -64,15 +64,15 @@ app.use(xss());
 // );
 
 // Test middleware
-app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  // console.log(req.headers);
-  next();
-});
+// app.use((req, res, next) => {
+//   req.requestTime = new Date().toISOString();
+//   // console.log(req.headers);
+//   next();
+// });
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [process.env.FRONTEND_URL],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
