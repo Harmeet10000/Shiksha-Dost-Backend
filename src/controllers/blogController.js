@@ -145,7 +145,7 @@ export const getLatestBlog = catchAsync(async (req, res, next) => {
 });
 
 export const getFeaturedBlog = catchAsync(async (req, res, next) => {
-  const featuredBlog = await Blog.findOne({ isFeatured: true });
+  const featuredBlog = await Blog.find({ isFeatured: true }).limit(5);
 
   res.status(200).json({
     success: true,

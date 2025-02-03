@@ -140,15 +140,19 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
 export const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
+  // Check if email & password exist
   if (!email || !password)
     return next(new AppError("Please provide email and password!", 400));
 
+  // Find user and check password
   const user = await User.findOne({ email }).select("+password");
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError("Incorrect email or password", 401));
 
+  // Send token if authentication succeeds
   createSendToken(user, 200, res);
 });
+
 
 export const loginMentor = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;

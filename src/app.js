@@ -18,6 +18,7 @@ import materialRoutes from "./routes/materialRoutes.js";
 import dppRoutes from "./routes/dppRoutes.js";
 import mentorshipRoutes from "./routes/mentorshipRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import requestLogger from "./utils/requestLogger.js";
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use(helmet());
 
 // Development logging
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+  app.use(requestLogger);
 }
 
 // Limit requests from same API
@@ -46,7 +47,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Parse cookies
-app.use(cookieParser()); 
+app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -69,7 +70,7 @@ app.use((req, res, next) => {
   // console.log(req.headers);
   next();
 });
- 
+
 app.use(
   cors({
     origin: "http://localhost:5173",

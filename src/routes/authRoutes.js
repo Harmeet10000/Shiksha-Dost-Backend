@@ -13,8 +13,15 @@ import {
   handleCallback,
 } from "../controllers/authController.js";
 
-
 const router = express.Router();
+
+router.get("/", (req, res) =>
+  res.json({ message: "Welcome to the Mentorship API 🚀. Running in ECS3 🎉" })
+);
+
+router.get("/health", (req, res) => {
+  res.status(200).json({ message: "Everything is good here 👀" });
+});
 
 router.post("/signup", signup);
 router.post("/login", login);
@@ -24,15 +31,11 @@ router.get("/verify-email/:token", verifyEmail);
 router.get("/google", getAuthUrl);
 router.get("/google/callback", handleCallback);
 
-
 router.use(protect);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 router.patch("/updateMyPassword", updatePassword);
 
 router.use(restrictTo("admin"));
-
-
-
 
 export default router;

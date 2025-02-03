@@ -15,10 +15,7 @@ export const updateStudentProfile = updateOne(User);
 
 export const getUserMentorship = getAll(Mentorship);
 
-export const getUserDPPs = getAll(User, {
-  path: "solvedDPPs.dpp",
-  select: "category subject topicName year totalMarks", // Only include specific fields of DPP
-});
+export const getUserDPPs = getAll(User);
 // eslint-disable-next-line no-unused-vars
 export const submitDPP = catchAsync(async (req, res, next) => {
   const { userAnswers, durationTaken, startAt, submittedAt, dppId } = req.body;
