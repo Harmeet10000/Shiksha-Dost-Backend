@@ -1,8 +1,12 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
-import { SESClient, SendTemplatedEmailCommand } from "@aws-sdk/client-ses";
-import { welcomeTemplate } from "../config/welcome-template.js";
-import { verificationTemplate } from "../config/verification-template.js";
+import {
+  CreateTemplateCommand,
+  SESClient,
+  SendTemplatedEmailCommand,
+} from "@aws-sdk/client-ses";
+import { welcomeTemplate } from "../template/welcome-template.js";
+import { verificationTemplate } from "../template/verification-template.js";
 import { Resend } from "resend";
 
 const sesClient = new SESClient({
@@ -15,15 +19,19 @@ const sesClient = new SESClient({
 
 export const Resendmail = catchAsync(async (info) => {
   const {
-    name,
-    to,
-    verificationURL,
-    role,
-    password,
-    use,
-    schedule,
-    meetingLink,
-  } = info;
+    name = "",
+    to = "",
+    verificationURL = "",
+    role = "",
+    password = "",
+    use = "",
+    schedule = {},
+    meetingLink = "",
+    razorpay_order_id = "",
+    razorpay_payment_id = "",
+    razorpay_signature = "",
+  } = info || {};
+  console.log(info)
   const resend = new Resend("re_dPQCac4W_8N4GP3V3eGJE4trqEZsLnt3Q");
 
   let htmlContent = "";
@@ -121,40 +129,49 @@ export const Resendmail = catchAsync(async (info) => {
     // User meeting details email template
     subject = "Meeting Details from ShikshaDost";
     htmlContent = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; }
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .header { color: #2c5282; }
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #2c5282;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-        .footer { margin-top: 20px; color: #666; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1 class="header">Meeting Details</h1>
-        <p>Hello ${name},</p>
-        <p>Your meeting with your mentor is scheduled on ${new Date(
-          schedule.on
-        ).toLocaleDateString()} at ${schedule.start} to ${schedule.end}.</p>
-        <p><strong>Meeting Link:</strong> <a href="${meetingLink}" target="_blank">${meetingLink}</a></p>
-        <p>We look forward to your session!</p>
-        <div class="footer">
-          <p>Best regards,<br>Team ShikshaDost</p>
-        </div>
-      </div>
-    </body>
-    </html>`;
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; }
+    .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+    .header { color: #2c5282; }
+    .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #2c5282;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin: 20px 0;
+    }
+    .footer { margin-top: 20px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="header">Meeting Details</h1>
+    <p>Hello ${info.name},</p>
+    <p>Your meeting with your student is scheduled on ${new Date(
+      info.schedule.on
+    ).toLocaleDateString()} at ${info.schedule.start} to ${
+      info.schedule.end
+    }.</p>
+    <p><strong>Meeting Link:</strong> <a href="${
+      info.meetingLink
+    }" target="_blank">${info.meetingLink}</a></p>
+    <p>We look forward to your session!</p>
+    
+    <h2>Payment Details</h2>
+    <p><strong>Order ID:</strong> ${info.razorpay_order_id}</p>
+    <p><strong>Payment ID:</strong> ${info.razorpay_payment_id}</p>
+    <p><strong>Signature:</strong> ${info.razorpay_signature}</p>
+    <div class="footer">
+      <p>Best regards,<br>Team ShikshaDost</p>
+    </div>
+  </div>
+</body>
+</html>`;
   } else if (role === "student" && use === "signup") {
     // Student case
     htmlContent = `

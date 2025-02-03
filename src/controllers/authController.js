@@ -141,14 +141,14 @@ export const login = catchAsync(async (req, res, next) => {
 
 export const loginMentor = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-
+console.log(email,password)
   if (!email || !password)
     return next(new AppError("Please provide email and password!", 400));
-
+console.log("h2")
   const user = await Mentor.findOne({ email }).select("+password");
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError("Incorrect email or password", 401));
-
+  console.log("h3")
   createSendToken(user, 200, res);
 });
 
@@ -173,7 +173,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
   try {
-    await sendEmail({
+    await Resendmail({
       email: user.email,
       subject: "Your password reset token (valid for 10 min)",
       message,

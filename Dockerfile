@@ -29,7 +29,7 @@ COPY --from=build /build/package-lock.json /ShikshaDost-Backend/package-lock.jso
 COPY --from=build /build/dist /ShikshaDost-Backend/dist
 # COPY --from=build /build/src /ShikshaDost-Backend/src
 # Run the application
-CMD ["npm", "run", "dev:prod"]
+CMD ["npm", "run", "start"]
 
 
 

@@ -124,7 +124,7 @@ userSchema.index({ active: 1 });
 userSchema.pre(/^find/, function (next) {
   this.find({
     active: { $ne: false },
-    isVerified: { $ne: false },
+    // isVerified: { $ne: false },
   }).populate({
     path: "savedBlogs.blogId", 
     select:

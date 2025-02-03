@@ -14,6 +14,7 @@ import {
   getProminentBlogs,
   getLatestBlog,
   toggleProminentBlog,
+  getFeaturedBlog,
 } from "../controllers/blogController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 import { increaseVisits } from "../middlewares/increaseVisits.js";
@@ -34,7 +35,9 @@ router.post(
   restrictTo("admin"),
   toggleProminentBlog
 );
+router.get("/getFeaturedBlog", getFeaturedBlog);
 router.get("/:slug", increaseVisits, getBlog);
+
 
 router.use(restrictTo("mentor"));
 router.post("/createBlog", createBlog);
