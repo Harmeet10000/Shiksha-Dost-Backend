@@ -468,7 +468,7 @@ export const getMentorships = catchAsync(async (req, res, next) => {
     },
     {
       $sort: {
-        "schedule.on": -1, // Sort by schedule date (latest first)
+        "schedule.on": 1, // Sort by schedule date (latest first)
         "schedule.start": 1, // Sort by start time (ascending order)
       },
     },
