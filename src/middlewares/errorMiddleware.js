@@ -1,4 +1,5 @@
 import AppError from "../utils/appError.js";
+import logger from "../utils/logger.js";
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
@@ -27,6 +28,7 @@ const handleJWTExpiredError = () =>
   new AppError("Your token has expired! Please log in again.", 401);
 
 const sendErrorDev = (err, res) => {
+  logger.error(`🛑 Dev Error: ${err.message}\nStack: ${err.stack}`);
   res.status(err.statusCode).json({
     status: err.status,
     error: err,
@@ -38,6 +40,7 @@ const sendErrorDev = (err, res) => {
 const sendErrorProd = (err, res) => {
   // Operational, trusted error: send message to client
   if (err.isOperational) {
+    logger.warn(`⚠️ Operational Error: ${err.message}`);
     res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
@@ -45,6 +48,7 @@ const sendErrorProd = (err, res) => {
 
     // Programming or other unknown error: don't leak error details
   } else {
+    logger.error(`💥 Unknown Error: ${err.message}\nStack: ${err.stack}`);
     // 1) Log error
     console.error("ERROR 💥", err);
 

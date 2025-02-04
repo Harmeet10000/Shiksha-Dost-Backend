@@ -7,10 +7,11 @@ import {
   deleteStudent,
   getUserDPPs,
   getUserMentorship,
+  getUserStats,
+  mentorshipGiven,
   submitDPP,
   updateStudentProfile,
 } from "../controllers/userController.js";
-import { checkout, paymentVerification } from "../helpers/razorpay.js";
 import { getUploadS3URL } from "../helpers/s3.js";
 
 const router = express.Router();
@@ -27,5 +28,7 @@ router.patch("/blockMentor/:id", blockMentor);
 router.delete("/deleteMentor/:id", deleteMentor);
 router.patch("/blockStudent/:id", blockStudent);
 router.delete("/deleteStudent/:id", deleteStudent);
+router.get("/getUserStats", getUserStats);
+router.get("/mentorshipGiven", mentorshipGiven);
 
 export default router;

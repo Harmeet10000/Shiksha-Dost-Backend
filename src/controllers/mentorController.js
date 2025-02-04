@@ -347,3 +347,126 @@ export const removeUnavailability = catchAsync(async (req, res, next) => {
     data: mentor,
   });
 });
+
+
+export const getMenteeStats = catchAsync(async (req, res, next) => {
+  const { period, value, status } = req.query;
+  const { mentorId } = req.params;
+  // Validate query parameters
+  if (!period || !value || !status) {
+    return next(new AppError("Invalid query parameters", 400));
+  }
+  // Valid statuses
+  const validStatuses = [
+    "Pending",
+    "Scheduled",
+    "In Progress",
+    "Completed",
+    "Cancelled",
+  ];
+  if (!validStatuses.includes(status)) {
+    return next(new AppError("Invalid status value", 400));
+  }
+  // Grouping logic based on period
+  const timeUnits = {
+    months: { $dateToString: { format: "%b", date: "$createdAt" } }, // e.g., Jan, Feb
+    weeks: { $concat: ["Week ", { $toString: { $isoWeek: "$createdAt" } }] }, // e.g., Week 1
+    days: {
+      $switch: {
+        branches: [
+          { case: { $eq: [{ $dayOfWeek: "$createdAt" }, 1] }, then: "Sunday" },
+          { case: { $eq: [{ $dayOfWeek: "$createdAt" }, 2] }, then: "Monday" },
+          { case: { $eq: [{ $dayOfWeek: "$createdAt" }, 3] }, then: "Tuesday" },
+          {
+            case: { $eq: [{ $dayOfWeek: "$createdAt" }, 4] },
+            then: "Wednesday",
+          },
+          {
+            case: { $eq: [{ $dayOfWeek: "$createdAt" }, 5] },
+            then: "Thursday",
+          },
+          { case: { $eq: [{ $dayOfWeek: "$createdAt" }, 6] }, then: "Friday" },
+          {
+            case: { $eq: [{ $dayOfWeek: "$createdAt" }, 7] },
+            then: "Saturday",
+          },
+        ],
+        default: "Unknown",
+      },
+    },
+  };
+  if (!timeUnits[period]) {
+    return next(new AppError("Invalid period type", 400));
+  }
+  // Calculate start date based on period
+  const startDate = new Date();
+  if (period === "days") startDate.setUTCDate(startDate.getUTCDate() - value);
+  if (period === "weeks")
+    startDate.setUTCDate(startDate.getUTCDate() - value * 7);
+  if (period === "months")
+    startDate.setUTCMonth(startDate.getUTCMonth() - value);
+  const menteeStats = await Mentorship.aggregate([
+    {
+      $match: {
+        mentor: new mongoose.Types.ObjectId(mentorId),
+        createdAt: { $gte: startDate },
+        status: status,
+      },
+    },
+    { $group: { _id: timeUnits[period], count: { $sum: 1 } } },
+    { $sort: { _id: 1 } },
+  ]);
+  // Formatting response
+  const stats = menteeStats.reduce((acc, curr) => {
+    acc[curr._id] = curr.count;
+    return acc;
+  }, {});
+  res.status(200).json({
+    status: "success",
+    data: stats,
+  });
+});
+
+export const getMentorships = catchAsync(async (req, res, next) => {
+  const { mentorId } = req.params;
+  const { status } = req.query;
+  if (!mentorId) {
+    return next(new AppError("mentorId is required", 400));
+  }
+  if (!status) {
+    return next(new AppError("status is required", 400));
+  }
+  const validStatuses = [
+    "Pending",
+    "Scheduled",
+    "In Progress",
+    "Completed",
+    "Cancelled",
+  ];
+  if (!validStatuses.includes(status)) {
+    return next(new AppError("Invalid status value", 400));
+  }
+  const mentorships = await Mentorship.aggregate([
+    {
+      $match: {
+        mentor: new mongoose.Types.ObjectId(mentorId), // Match mentorId
+        status: status, // Filter by status
+      },
+    },
+    {
+      $sort: {
+        "schedule.on": 1, // Sort by schedule date (latest first)
+        "schedule.start": 1, // Sort by start time (ascending order)
+      },
+    },
+  ]);
+  if (!mentorships || mentorships.length === 0) {
+    return next(
+      new AppError("No mentorships found for the provided criteria", 404)
+    );
+  }
+  res.status(200).json({
+    status: "success",
+    data: mentorships,
+  });
+});

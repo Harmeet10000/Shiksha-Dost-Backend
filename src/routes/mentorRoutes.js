@@ -9,17 +9,20 @@ import {
   getUnavailability,
   getMentorDetails,
   getMentorMentorship,
+  getMenteeStats,
+  getMentorships,
 } from "../controllers/mentorController.js";
 import { getUploadS3URL } from "../helpers/s3.js";
 
 const router = express.Router();
 
-
+router.get("/getMentorDetails/:id", getMentorDetails);
 router.use(protect);
 router.get("/getAllMentor", getAllMentor);
 router.get("/checkUnavailability/:id", checkUnavailability);
 router.get("/unavailability/:id", getUnavailability);
-router.get("/getMentorDetails/:id", getMentorDetails);
+router.get("/getMenteeStats/:mentorId", getMenteeStats);
+router.get("/getMentorships/:mentorId", getMentorships);
 
 router.use(restrictTo("mentor"));
 router.patch("/:id", updateMentor);

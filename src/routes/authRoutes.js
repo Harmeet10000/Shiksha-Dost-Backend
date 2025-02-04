@@ -14,6 +14,13 @@ import {
 
 const router = express.Router();
 
+router.get("/", (req, res) =>{
+  res.json({ message: "Welcome to the Mentorship API 🚀. Running in ECS 🎉" });
+});
+router.get("/health", (req, res) => {
+  res.status(200).json({ message: "Everything is good here 👀" });
+});
+
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/loginMentor", loginMentor);

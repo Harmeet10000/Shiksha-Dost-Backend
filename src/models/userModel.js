@@ -115,6 +115,7 @@ const userSchema = new Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    timestamps: true,
   }
 );
 
@@ -124,15 +125,18 @@ userSchema.index({ active: 1 });
 userSchema.pre(/^find/, function (next) {
   this.find({
     active: { $ne: false },
-    // isVerified: { $ne: false },
-  }).populate({
-    path: "savedBlogs.blogId", 
-    select:
-      "author title slug desc category content cover_image visit likes shares",
-  });
+  })
+    .populate({
+      path: "savedBlogs.blogId",
+      select:
+        "author title slug desc category content cover_image visit likes shares",
+    })
+    .populate({
+      path: "solvedDPPs.dpp",
+      select: "category subject topicName year totalMarks",
+    });
   next();
 });
-
 
 userSchema.pre("save", async function (next) {
   try {

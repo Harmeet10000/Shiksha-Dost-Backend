@@ -18,6 +18,7 @@ import materialRoutes from "./routes/materialRoutes.js";
 import dppRoutes from "./routes/dppRoutes.js";
 import mentorshipRoutes from "./routes/mentorshipRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import requestLogger from "./utils/requestLogger.js";
 
 const app = express();
 
@@ -28,9 +29,8 @@ app.use(helmet());
 
 // Development logging
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+  app.use(requestLogger);
 }
-
 // Limit requests from same API
 const limiter = rateLimit({
   max: 500,
@@ -64,15 +64,15 @@ app.use(xss());
 // );
 
 // Test middleware
-app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  // console.log(req.headers);
-  next();
-});
+// app.use((req, res, next) => {
+//   req.requestTime = new Date().toISOString();
+//   // console.log(req.headers);
+//   next();
+// });
  
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [process.env.FRONTEND_URL],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
