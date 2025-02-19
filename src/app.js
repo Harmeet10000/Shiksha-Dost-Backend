@@ -20,16 +20,13 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import requestLogger from "./utils/requestLogger.js";
 
 const app = express();
-
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
 
 app.use(helmet());
 
 // Development logging
-if (process.env.NODE_ENV === "development") {
-  app.use(requestLogger);
-}
+app.use(requestLogger);
 
 // Limit requests from same API
 const limiter = rateLimit({
@@ -80,6 +77,14 @@ app.use(
 );
 
 // 3) ROUTES
+app.get("/", (req, res) => {
+  res
+    .status(200)
+    .json({ message: "Welcome to the Mentorship API 🚀. Running in ECS 🎉" });
+});
+app.get("/health", (req, res) => {
+  res.status(200).json({ message: "Everything is good here 👀" });
+});
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/mentor", mentorRoutes);

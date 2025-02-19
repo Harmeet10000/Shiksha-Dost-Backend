@@ -16,6 +16,7 @@ package-lock.json
 # Editor directories and files
 .env
 .vscode/*
+.husky/*
 !.vscode/extensions.json
 .idea
 .DS_Store
