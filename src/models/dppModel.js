@@ -30,18 +30,18 @@ const dppSchema = new Schema(
     problems: [
       {
         question: {
-          text: { type: String }, // The question as text
-          S3url: { type: String }, // Optional S3 URL
+          text: { type: String },  
+          S3url: { type: String },  
         },
         options: [
           {
-            text: { type: String }, // The option as text
-            S3url: { type: String }, // Optional S3 URL
+            text: { type: String },   
+            S3url: { type: String },  
           },
         ],
         correctOption: {
-          text: { type: String }, // The correct answer as text
-          S3url: { type: String }, // Optional S3 URL
+          text: { type: String },  
+          S3url: { type: String }, 
         },
         marks: {
           type: Number,

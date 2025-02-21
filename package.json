@@ -10,8 +10,7 @@
     "start": "node dist/index.cjs",
     "build": "rm -rf dist && npx webpack --config webpack.config.js",
     "lint": "npx eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
