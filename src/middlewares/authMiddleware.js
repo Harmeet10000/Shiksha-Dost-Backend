@@ -32,10 +32,23 @@ export const protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  // 2) Verification token
+  // 4) CSRF token validation for non-GET requests
+  if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) {
+    // Check for CSRF token in headers (Angular/React sends as X-XSRF-TOKEN)
+    const csrfToken =
+      req.headers["x-xsrf-token"] || req.headers["x-csrf-token"];
+    const storedToken = req.cookies["XSRF-TOKEN"];
+
+    if (!csrfToken || !storedToken || csrfToken !== storedToken) {
+      return next(new AppError("Invalid or missing CSRF token", 403));
+    }
+  }
+
+  // 5) Verification token
   // eslint-disable-next-line no-undef
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  // 3) Check if user/mentor still exists
+
+  // 6) Check if user/mentor still exists
   let currentUser;
   if (decoded.role === "mentor") {
     currentUser = await Mentor.findById(decoded.id);
@@ -43,7 +56,13 @@ export const protect = catchAsync(async (req, res, next) => {
     currentUser = await User.findById(decoded.id);
   }
 
-  // 4) Check if user changed password after the token was issued
+  if (!currentUser) {
+    return next(
+      new AppError("The user belonging to this token no longer exists.", 401)
+    );
+  }
+
+  // 7) Check if user changed password after the token was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError("User recently changed password! Please log in again.", 401)
@@ -52,7 +71,6 @@ export const protect = catchAsync(async (req, res, next) => {
 
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
-  // console.log("protect", req.user);
   next();
 });
 

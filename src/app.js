@@ -8,21 +8,47 @@ import cors from "cors";
 import AppError from "./utils/appError.js";
 import globalErrorHandler from "./middlewares/errorMiddleware.js";
 import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import mentorRoutes from "./routes/mentorRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import materialRoutes from "./routes/materialRoutes.js";
-import dppRoutes from "./routes/dppRoutes.js";
 import mentorshipRoutes from "./routes/mentorshipRoutes.js";
+import dppRoutes from "./routes/dppRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import requestLogger from "./utils/requestLogger.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Read the swagger document - with proper error handling
+let swaggerDocument;
+try {
+  swaggerDocument = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "../docs/swagger-output.json"), "utf8")
+  );
+} catch (error) {
+  console.warn(
+    "Swagger documentation not found or invalid. API docs will not be available."
+  );
+  swaggerDocument = {
+    info: {
+      title: "API Documentation",
+      description:
+        "Documentation not available. Run 'npm run generate-swagger' to generate it.",
+    },
+  };
+}
+
 const app = express();
+
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
-
 app.use(helmet());
 
 // Development logging
@@ -55,36 +81,52 @@ app.use(xss());
 // app.use(
 //   hpp({
 //     whitelist: [
-
 //     ],
 //   })
 // );
-
-// Test middleware
-// app.use((req, res, next) => {
-//   req.requestTime = new Date().toISOString();
-//   // console.log(req.headers);
-//   next();
-// });
 
 app.use(
   cors({
     origin: [process.env.FRONTEND_URL],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Authorization", "Content-Type"],
+    allowedHeaders: ["Authorization", "Content-Type", "X-XSRF-TOKEN"],
     credentials: true,
   })
 );
 
-// 3) ROUTES
+// ROUTES
 app.get("/", (req, res) => {
   res
     .status(200)
-    .json({ message: "Welcome to the Mentorship API 🚀. Running in ECS 🎉" });
+    .json({ message: "Welcome to the Shiksha Dost API 🚀. Running in ECS 🎉" });
 });
+
 app.get("/health", (req, res) => {
   res.status(200).json({ message: "Everything is good here 👀" });
 });
+
+// Swagger setup
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    explorer: true,
+    customCss: ".swagger-ui .topbar { display: none }",
+    swaggerOptions: {
+      docExpansion: "none",
+      filter: true,
+      showRequestDuration: true,
+    },
+  })
+);
+
+// Endpoint to serve the swagger.json file
+app.get("/swagger.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerDocument);
+});
+
+// API Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/mentor", mentorRoutes);

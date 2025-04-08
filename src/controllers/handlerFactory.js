@@ -44,6 +44,39 @@ export const getAll = (Model, popOptions) =>
     });
   });
 
+  export const getAllCursor = catchAsync(async (req, res, next) => {
+    // Create a features instance with cursor pagination
+    const features = new APIFeatures(Model.find(), req.query)
+      .filter()
+      .limitFields()
+      .cursorPaginate();
+
+    // Execute the query
+    let items = await features.query;
+
+    // Check if there are more results
+    const hasMore = items.length > req.query.limit;
+    if (hasMore) {
+      // Remove the extra item we fetched to check if there are more
+      items.pop();
+    }
+
+    // Get the cursor for the next/prev page
+    const nextCursor = hasMore ? items[items.length - 1]._id : null;
+
+    res.status(200).json({
+      status: "success",
+      results: items.length,
+      data: {
+        items,
+        pagination: {
+          hasMore,
+          nextCursor,
+        },
+      },
+    });
+  });
+
 export const getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     let doc;

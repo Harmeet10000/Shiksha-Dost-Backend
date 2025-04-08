@@ -17,20 +17,21 @@ const signToken = (id, role) => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id, user.role);
+
   const cookieOptions = {
     expires: new Date(
       // eslint-disable-next-line no-undef
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    sameSite: true,
   };
   // eslint-disable-next-line no-undef
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
   res.cookie("jwt", token, cookieOptions);
-  // console.log("Set-Cookie headers:", res.getHeaders()["set-cookie"]);
 
   // Remove password from output
   user.password = undefined;
@@ -84,7 +85,7 @@ export const signup = catchAsync(async (req, res, next) => {
   });
 
   await createSendEmail(newUser, req, next);
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -104,7 +105,7 @@ export const signupMentor = catchAsync(async (req, res, next) => {
     use: "signup",
   };
   await Resendmail(info);
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -150,9 +151,8 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect email or password", 401));
 
   // Send token if authentication succeeds
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
-
 
 export const loginMentor = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -164,7 +164,7 @@ export const loginMentor = catchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError("Incorrect email or password", 401));
 
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 export const forgotPassword = catchAsync(async (req, res, next) => {
@@ -231,7 +231,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 export const updatePassword = catchAsync(async (req, res, next) => {
@@ -249,7 +249,7 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   // User.findByIdAndUpdate will NOT work as intended!
 
   // 4) Log user in, send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 export const getAuthUrl = (req, res) => {
