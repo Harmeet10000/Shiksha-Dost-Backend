@@ -6,33 +6,27 @@
             "use": "@vercel/node"
         }
     ],
-    "routes": [
+    "rewrites": [
         {
-            "src": "/api-docs(.*)",
-            "dest": "/src/index.js"
+            "source": "/api-docs/(.*)",
+            "destination": "/src/index.js"
         },
         {
-            "src": "/swagger.json",
-            "dest": "/src/index.js"
+            "source": "/swagger.json",
+            "destination": "/src/index.js"
         },
         {
-            "src": "/api/v1/(.*)",
-            "dest": "/src/index.js"
+            "source": "/api/v1/(.*)",
+            "destination": "/src/index.js"
         },
         {
-            "src": "/health",
-            "dest": "/src/index.js"
+            "source": "/health",
+            "destination": "/src/index.js"
         },
         {
-            "src": "/(.*)",
-            "dest": "/src/index.js"
+            "source": "/(.*)",
+            "destination": "/src/index.js"
         }
-    ],
-    "env": {
-        "NODE_ENV": "production"
-    },
-    "regions": [
-        "bom1"
     ],
     "headers": [
         {
@@ -56,6 +50,12 @@
                 }
             ]
         }
+    ],
+    "env": {
+        "NODE_ENV": "production"
+    },
+    "regions": [
+        "bom1"
     ],
     "public": false
 }
