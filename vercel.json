@@ -8,8 +8,54 @@
     ],
     "routes": [
         {
+            "src": "/api-docs(.*)",
+            "dest": "/src/index.js"
+        },
+        {
+            "src": "/swagger.json",
+            "dest": "/src/index.js"
+        },
+        {
+            "src": "/api/v1/(.*)",
+            "dest": "/src/index.js"
+        },
+        {
+            "src": "/health",
+            "dest": "/src/index.js"
+        },
+        {
             "src": "/(.*)",
-            "dest": "/"
+            "dest": "/src/index.js"
         }
-    ]
+    ],
+    "env": {
+        "NODE_ENV": "production"
+    },
+    "regions": [
+        "bom1"
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Access-Control-Allow-Credentials",
+                    "value": "true"
+                },
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "${FRONTEND_URL}"
+                },
+                {
+                    "key": "Access-Control-Allow-Methods",
+                    "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+                },
+                {
+                    "key": "Access-Control-Allow-Headers",
+                    "value": "X-CSRF-Token, X-XSRF-TOKEN, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
+                }
+            ]
+        }
+    ],
+    "public": false
 }
